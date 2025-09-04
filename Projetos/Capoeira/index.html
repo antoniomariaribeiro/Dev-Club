@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aulas de Capoeira</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <img src="/assets/logo.png" alt="Logo Capoeira">
+        <h1>Capoeira Nacional</h1>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#loja">Loja</a></li>
+                <li><a href="#fotos">Fotos</a></li>
+                <li><a href="#eventos">Eventos</a></li>
+                <li><a href="#localizacao">Localização</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="inicio">
+        <h1>História da Capoeira</h1>
+        <p>A capoeira está associada ao contexto da escravidão no Brasil, e os primeiros registros históricos são do
+            século XVIII. Os negros africanos escravizados desenvolveram a prática como forma de autodefesa e
+            resistência à opressão dos senhores.
+
+            Pesquisadores apontam que o início da expressão se deu no período de formação dos quilombos, comunidades de
+            escravizados que fugiam das violências a que eram submetidos.
+
+            O termo capoeira significa “o mato que nasce depois do desmatamento”. O nome está relacionado à forma como
+            se dava a prática em seu início, realizada nas regiões de mato. O surgimento da expressão ocorreu na zona
+            rural, e somente depois ela chegou aos espaços urbanos.
+
+            Além da intenção de desenvolver algo como defesa corporal, a capoeira foi criada como mecanismo de
+            resistência cultural, em um processo de manutenção da identidade dos povos africanos que foram submetidos à
+            escravidão.
+        </p>
+
+        <p>A capoeira era considerada proibida, pois não era bem-vista pelos senhores. Nesse sentido, as práticas no
+            mato eram formas de manter a expressão viva sem que os proprietários das fazendas descobrissem.
+
+            As cidades de Salvador, Rio de Janeiro e Recife foram os principais centros urbanos que se tornaram palco da
+            difusão da capoeira.
+
+            Antônio Moraes da Silva menciona em sua obra Dicionário da Língua Portuguesa, de 1823, que a luta da
+            capoeira havia sido praticada nesse período também por pessoas mestiças e indígenas.
+
+            A repressão a quem fazia capoeira se estendeu por muito tempo na história brasileira. Após a Proclamação da
+            República, o Código Penal de 1890 incluiu a capoeiragem em ruas e praças públicas como uma prática proibida.
+            Houve também o fenômeno da formação das maltas de capoeira. Elas eram caracterizadas por grupos organizados
+            de pessoas que utilizavam a capoeira para promover desordem com diferentes objetivos, incluindo ações
+            políticas.
+            As autoridades consideravam a modalidade como desordem, violência e baderna. Além das maltas, houve uma
+            perseguição racista contra a capoeira que se uniu ao processo de repressão contra outras manifestações, como
+            o candomblé e o samba.
+            Já no século XIX, em sua primeira metade, a capoeira passou a ser praticada por outros grupos, tais como
+            escravizados libertos, militares, portugueses, imigrantes europeus e membros da elite social.]
+        </p>
+
+        <p>A esportivização da capoeira enquanto luta brasileira foi impulsionada pelas obras O Guia do Capoeira ou
+            Ginástica Brasileira (1907) e Ginástica Nacional (Capoeiragem): metodizada e regrada (1928).
+
+            Tendo permanecido como uma prática proibida por muito tempo, a legalização da capoeira ocorreu na década de
+            1930.
+        </p>
+
+        <button onclick="visible()">Inscreva-se</button>
+
+          <div id="formulario" style="display: none;">
+        <h2>Inscreva-se</h2>
+        <form>
+            <input type="text" placeholder="Nome completo" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Telefone">
+            <button id="submit" type="submit">Enviar</button>
+        </form>
+    </div>
+
+    </section>
+    
+       <img id="mestres" src="/assets/GRUPO-NACIONAL.png" alt="mestres">
+
+    <section id="sobre">
+        <h2>Sobre Nós</h2>
+        <p>Bem-vindos ao aulasdecapoeira.com , o seu portal para o fascinante mundo da capoeira da ACADEMIA NACIONAL -
+            MESTRE TONINHO!... (texto completo fornecido)</p>
+    </section>
+
+    <section id="loja">
+        <h2>Loja</h2>
+        <div class="produtos">
+            <div class="produto"><img src="./assets/Calsa de capoeira.JPG">
+                <p>Calça de Capoeira</p>
+                <h1>R$ 50.00</h1>
+            </div>
+            <div class="produto"><img src="GRUPO-NACIONAL1.png">
+                <p>Camisa de Capoeira</p>
+            </div>
+            <div class="produto"><img src="GRUPO-NACIONAL2.png">
+                <p>Berimbau</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="fotos">
+        <h2>Galeria de Fotos</h2>
+        <div class="galeria">
+            <img src="./assets/Aula-de-capoeira6.jpg">
+            <img src="./assets/GRUPO-NACIONAL1.png">
+            <img src="./assets/GRUPO-NACIONAL2.png">
+        </div>
+    </section>
+
+    <section id="eventos">
+        <h2>Próximos Eventos</h2>
+        <ul>
+            <li>Batizado de Capoeira - 15 de Julho</li>
+            <li>Roda Mensal - 01 de Agosto</li>
+            <li>Workshop com Mestre Toninho - 20 de Agosto</li>
+        </ul>
+    </section>
+
+    <section id="localizacao">
+        <h2>Localização</h2>
+        <p>Salão de Artes Marciais - R.Dr Américo Figueiredo,1939 - Zona Oeste, Sorocaba, São Paulo, CEP:18055132
+            (pavimento superior do Posto Manchester)</p>
+        <iframe src="https://www.google.com/maps?q=R.+Dr.+Am%C3%A9rico+Figueiredo,+1939+-+Sorocaba,+SP&output=embed"
+            width="100%" height="300" style="border:0;"></iframe>
+    </section>
+
+    <footer>
+        <p>Contatos:</p>
+        <p>Telefone: (15) 991080218</p>
+        <p>Email: contato@aulasdecapoeira.com</p>
+    </footer>
+</body>
+
+<script src="/script.js"></script>
+
+</html>

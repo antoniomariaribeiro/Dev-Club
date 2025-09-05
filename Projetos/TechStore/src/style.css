@@ -1,0 +1,222 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #FF4111;
+    --secondary-color: #2C3E50;
+    --accent-color: #3498DB;
+    --text-color: #2C3E50;
+    --light-gray: #F8F9FA;
+    --border-color: #E9ECEF;
+    --white-color: #FFFFFF;
+    --hover-btn: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    line-height: 1.6;
+    /* Altura da linha */
+}
+
+header {
+    background-color: var(--white-color);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    /* Alinhamento na vertical */
+    justify-content: space-around;
+    /* Espaçamento entre os intens */
+}
+
+.logo {
+    display: flex;
+    /* Usar flexbox para alinhar itens */
+    align-items: center;
+    gap: 16px;
+    /* Espaçamento entre a logo e o texto */
+}
+
+h1 {
+    font-size: 32px;
+    /* Tamanho da fonte */
+    color: var(--primary-color);
+    font-weight: bold;
+    /* Negrito */
+}
+
+.fa-bolt {
+    color: var(--primary-color);
+    font-size: 32px;
+    /* Tamanho do ícone */
+}
+
+.container-busca {
+    width: 100%;
+    /* Ocupa toda a largura disponível */
+    margin: 0 32px;
+    /* Centraliza horizontalmente */
+    max-width: 500px;
+    /* Largura máxima */
+    display: flex;
+    /* Usar flexbox para alinhar itens */
+    align-items: center;
+    /* Alinhamento na vertical */
+    padding: 8px 16px;
+    /* Espaçamento interno */
+    background-color: var(--light-gray);
+    /* Fundo cinza claro */
+    border-radius: 24px;
+    /* Bordas arredondadas */
+}
+
+.container-busca input {
+    width: 100%;
+    /* Ocupa toda a largura disponível */
+    border: none;
+    /* Remove a borda padrão */
+    padding: 8px;
+    /* Espaçamento interno */
+    outline: none;
+    /* Remove o contorno ao focar */
+    background-color: var(--light-gray);
+    /* Fundo transparente */
+    font-size: 16px;
+    /* Tamanho da fonte */
+}
+
+.fa-magnifying-glass {
+    color: var(--primary-color);
+}
+
+.container-categorias {
+    display: flex;
+    justify-content: center;
+    /* Centraliza horizontalmente */
+    background-color: var(--secondary-color);
+
+}
+
+.container-categorias nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 8px 32px;
+}
+
+.botao-categorias {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border: none;
+    border-radius: 24px;
+    color: var(--white-color);
+    background: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    /* Muda o cursor ao passar por cima */
+
+    &.ativo {
+        background-color: var(--primary-color);
+    }
+
+    &:hover {
+        background-color: var(--hover-btn);
+    }
+}
+
+.secao-hero {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    text-align: center;
+    padding: 48px 32px;
+    background: #833AB4;
+    background: linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(255, 65, 17, 1) 59%, rgba(252, 176, 69, 1) 100%);
+}
+
+footer {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    text-align: center;
+    padding: 32px;
+}
+
+.produtos {
+     width: 100%;
+     max-width: 1200px;
+     padding: 32px;
+     margin: 0 auto;
+    
+}
+
+.produtos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px,1fr));
+    gap: 20px;
+}
+
+.cartao-produto {
+    background-color: var(--white-color);
+    border-radius: 16px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    cursor: pointer;
+    overflow: hidden;
+
+    & :hover {
+        box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+        transform: translateY(-16px); /* y - Vertical & x - Horizontal*/
+        transition: 0.5s;
+    }
+}
+
+.imagem-produto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.info-produto {
+    padding: 16px;
+}
+
+.nome-produto {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.descricao-produto {
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.preco-produto {
+    font-size: 20px;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.botao-produto {
+    width: 100%;
+    background-color: var(--accent-color);
+    color: var(--white-color);
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: #2e658a;
+    }
+}

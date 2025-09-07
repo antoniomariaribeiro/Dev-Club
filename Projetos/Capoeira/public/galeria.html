@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria | Capoeira Nacional</title>
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="img/logo.png" alt="Logo Capoeira Nacional" class="logo-img">
+      Capoeira Nacional
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="loja.html">Loja</a></li>
+        <li><a href="eventos.html">Eventos</a></li>
+        <li><a href="galeria.html">Galeria</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      </ul>
+    </nav>
+    <a href="login.html" class="login-btn">Login</a>
+  </header>
+  <main class="galeria-container">
+    <h1>Galeria de Fotos</h1>
+    <section id="galeria-grid">
+      <!-- Imagens serão carregadas aqui via JS -->
+    </section>
+    <!-- Formulário de upload (apenas para admin) -->
+    <section id="form-galeria" style="display:none;">
+      <h2>Adicionar Foto ou Vídeo <span style="font-size:0.9em; color:#f9d923;">(Apenas para Admin)</span></h2>
+      <form id="galeriaForm">
+        <input type="text" name="legenda" placeholder="Legenda" required>
+        <div style="margin: 12px 0;">
+          <label style="color:#fff; font-size:1rem;">
+            <input type="radio" name="tipo" value="imagem" checked> Foto
+          </label>
+          <label style="color:#fff; font-size:1rem; margin-left:18px;">
+            <input type="radio" name="tipo" value="video"> Vídeo
+          </label>
+        </div>
+        <div id="input-imagem">
+          <input type="file" name="imagem" accept="image/*">
+        </div>
+        <div id="input-video" style="display:none;">
+          <input type="url" name="video" placeholder="Link do YouTube">
+        </div>
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Capoeira Nacional. Todos os direitos reservados.</p>
+  </footer>
+  <script src="js/galeria.js"></script>
+</body>
+</html>

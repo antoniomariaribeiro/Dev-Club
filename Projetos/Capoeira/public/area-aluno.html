@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área do Aluno | Capoeira Nacional</title>
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+  <div class="aluno-layout">
+    <aside class="aluno-sidebar">
+      <div class="aluno-logo">Aluno</div>
+      <nav>
+        <ul>
+          <li><a href="#" class="aluno-link" data-section="perfil">Perfil</a></li>
+          <li><a href="#" class="aluno-link" data-section="presenca">Presença</a></li>
+          <li><a href="#" class="aluno-link" data-section="pagamentos">Pagamentos</a></li>
+          <li><a href="#" class="aluno-link" data-section="materiais">Materiais</a></li>
+          <li><a href="#" class="aluno-link" data-section="videos">Vídeos de Treino</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="aluno-main">
+      <section id="aluno-perfil" class="aluno-section">
+        <h1>Bem-vindo, <span id="alunoNome">Aluno</span>!</h1>
+        <p>Turma: <span id="alunoTurma">-</span></p>
+        <p>Faixa: <span id="alunoFaixa">-</span></p>
+        <button id="btnAlterarDados">Alterar Dados</button>
+      </section>
+      <section id="aluno-presenca" class="aluno-section" style="display:none;">
+        <h2>Histórico de Presença</h2>
+        <div id="listaPresenca">Em breve: presença detalhada.</div>
+      </section>
+      <section id="aluno-pagamentos" class="aluno-section" style="display:none;">
+        <h2>Pagamentos</h2>
+        <div id="listaPagamentos">Em breve: mensalidades e status.</div>
+      </section>
+      <section id="aluno-materiais" class="aluno-section" style="display:none;">
+        <h2>Materiais Exclusivos</h2>
+        <div id="listaMateriais">Em breve: PDFs, links e downloads.</div>
+      </section>
+      <section id="aluno-videos" class="aluno-section" style="display:none;">
+        <h2>Vídeos de Treino</h2>
+        <div id="listaVideos">Em breve: vídeos para estudo e prática.</div>
+      </section>
+    </main>
+  </div>
+  <script src="js/aluno.js"></script>
+</body>
+</html>

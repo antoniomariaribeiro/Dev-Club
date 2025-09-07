@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventos | Capoeira Nacional</title>
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="img/logo.png" alt="Logo Capoeira Nacional" class="logo-img">
+      Capoeira Nacional
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="loja.html">Loja</a></li>
+        <li><a href="eventos.html">Eventos</a></li>
+        <li><a href="galeria.html">Galeria</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      </ul>
+    </nav>
+    <a href="login.html" class="login-btn">Login</a>
+  </header>
+  <main class="eventos-container">
+  <h1 style="color: #fff;">Eventos do Grupo Capoeira Nacional</h1>
+    <section id="eventos-lista">
+      <div style="color:#fff;opacity:0.7;font-size:1.05em;text-align:center;margin:32px 0;">
+        Nenhum evento cadastrado ainda.
+      </div>
+    </section>
+    <!-- Formulário de cadastro de evento (apenas para admin) -->
+    <section id="form-evento" style="display:none;">
+  <!-- Formulário exclusivo para administradores -->
+  <h2 style="color: #fff;">Adicionar Novo Evento <span style="font-size:0.9em; color:#f9d923;">(Apenas para Admin)</span></h2>
+      <form id="eventoForm">
+        <input type="text" name="nome" placeholder="Nome do evento" required>
+        <input type="date" name="data" required>
+        <input type="text" name="local" placeholder="Local" required>
+        <textarea name="descricao" placeholder="Descrição" required></textarea>
+        <input type="file" name="imagem" accept="image/*" required>
+        <button type="submit">Cadastrar Evento</button>
+      </form>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Capoeira Nacional. Todos os direitos reservados.</p>
+  </footer>
+  <script src="js/eventos.js"></script>
+</body>
+</html>

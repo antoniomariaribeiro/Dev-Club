@@ -15,7 +15,7 @@ async function createAdmin() {
 
   const admin = new User({
     nome: 'Mestre Toninho',
-    email: 'admin@capoeira.com',
+    email: 'toninhodacapoeira@gmail.com',
     cpf: '12261737807',
     telefone: '15991080218',
     senha: senhaHash,

@@ -14,6 +14,7 @@
         <ul>
           <li><a href="#" class="admin-link" data-section="dashboard">Dashboard</a></li>
           <li><a href="#" class="admin-link" data-section="usuarios">Usuários/Alunos</a></li>
+          <li><a href="#" class="admin-link" data-section="presencas">Presenças</a></li>
           <li><a href="#" class="admin-link" data-section="eventos">Eventos</a></li>
           <li><a href="#" class="admin-link" data-section="galeria">Galeria</a></li>
           <li><a href="#" class="admin-link" data-section="loja">Loja</a></li>
@@ -23,6 +24,9 @@
     </aside>
     <main class="admin-main">
   <section id="admin-dashboard" class="admin-section">
+    <div style="margin-bottom: 24px; text-align: right;">
+      <span id="admin-nome-logado" style="font-size:1.1rem;color:#f9d923;font-weight:bold;"></span>
+    </div>
     <h1>Bem-vindo ao Painel Administrativo</h1>
     <div class="dashboard-cards">
       <div class="dashboard-card">
@@ -41,7 +45,7 @@
         <h3>Inscrições em Eventos</h3>
         <span id="dashboard-total-inscricoes" class="dashboard-number">-</span>
       </div>
-    </div>
+            <main class="admin-main">
     <p style="margin-top:32px;">Selecione uma opção no menu para gerenciar o site.</p>
   </section>
   <section id="admin-usuarios" class="admin-section" style="display:none;">
@@ -64,9 +68,27 @@
       </table>
     </div>
   </section>
-      <section id="admin-eventos" class="admin-section" style="display:none;">
-        <h2>Gerenciar Eventos</h2>
-        <p>Em breve: listagem, edição e exclusão de eventos.</p>
+      <section id="admin-presencas" class="admin-section" style="display:none;">
+        <h2>Histórico de Presença dos Alunos</h2>
+        <div style="margin-bottom:16px;">
+          <label for="filtroMes">Filtrar por mês:</label>
+          <input type="month" id="filtroMes" />
+        </div>
+        <div id="tabela-presencas-container">
+          <table class="admin-table" id="tabela-presencas">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Mês</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-presencas">
+              <tr><td colspan="4" style="text-align:center;opacity:0.7;">Carregando presenças...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
       <section id="admin-galeria" class="admin-section" style="display:none;">
         <h2>Gerenciar Galeria</h2>
@@ -78,6 +100,9 @@
       </section>
       <section id="admin-contato" class="admin-section" style="display:none;">
         <h2>Mensagens de Contato</h2>
+                    <div style="margin-bottom: 24px; text-align: right;">
+                      <span id="admin-nome-logado" style="font-size:1.1rem;color:#f9d923;font-weight:bold;"></span>
+                    </div>
         <p>Em breve: visualizar e responder mensagens recebidas pelo site.</p>
       </section>
     </main>

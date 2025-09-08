@@ -1,3 +1,30 @@
+// Carregar histórico de presenças dos alunos (admin)
+async function carregarPresencasAdmin(mesFiltro = null) {
+  const tbody = document.getElementById('tbody-presencas');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:0.7;">Carregando presenças...</td></tr>';
+  try {
+    const token = localStorage.getItem('token');
+    const res = await fetch('http://localhost:5000/api/presencas', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error('Erro ao buscar presenças');
+    let lista = await res.json();
+    if (mesFiltro) {
+      lista = lista.filter(p => p.mes === mesFiltro);
+    }
+    if (!Array.isArray(lista) || lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:0.7;">Nenhuma presença encontrada.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    lista.forEach(p => {
+      tbody.innerHTML += `<tr><td>${p.nome}</td><td>${p.data}</td><td>${p.hora}</td><td>${p.mes}</td></tr>`;
+    });
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:#f44336;text-align:center;">Erro ao carregar presenças.</td></tr>';
+  }
+}
 // Carregar estatísticas do dashboard
 async function carregarDashboard() {
   const token = localStorage.getItem('token');
@@ -84,16 +111,18 @@ async function carregarUsuarios() {
       tbody.innerHTML += `
         <tr>
           <td>${user.nome}</td>
-          <td>${user.email}</td>
+          <td class="email-col">${user.email}</td>
           <td>${user.cpf}</td>
           <td>${user.telefone}</td>
           <td>${user.isAdmin ? 'Sim' : 'Não'}</td>
-          <td>
-            <button class="admin-editar" data-id="${user._id}">Editar</button>
-            <button class="admin-excluir" data-id="${user._id}">Excluir</button>
-            <button class="admin-promover" data-id="${user._id}" data-admin="${user.isAdmin}">
-              ${user.isAdmin ? 'Remover Admin' : 'Tornar Admin'}
-            </button>
+          <td style="text-align:right;padding-right:32px;">
+            <div class="admin-btns">
+              <button class="admin-editar" data-id="${user._id}">Editar</button>
+              <button class="admin-excluir" data-id="${user._id}">Excluir</button>
+              <button class="admin-promover" data-id="${user._id}" data-admin="${user.isAdmin}">
+                ${user.isAdmin ? 'Remover Admin' : 'Tornar Admin'}
+              </button>
+            </div>
           </td>
         </tr>
       `;
@@ -110,23 +139,22 @@ document.addEventListener('DOMContentLoaded', function() {
     usuariosLink.addEventListener('click', carregarUsuarios);
   }
 });
-// Proteção de acesso ao painel admin
+// Proteção de acesso ao painel admin e exibição do nome do usuário
 document.addEventListener('DOMContentLoaded', function() {
-  // Exemplo: token salvo no localStorage após login
   const token = localStorage.getItem('token');
   const isAdmin = localStorage.getItem('isAdmin');
+  const nome = localStorage.getItem('nome');
   if (!token || isAdmin !== 'true') {
     window.location.href = 'login.html';
     return;
   }
-});
-// admin.js
-// Alterna as seções do painel admin conforme o menu
-
-document.addEventListener('DOMContentLoaded', function() {
+  function exibirNomePainel() {
+    const nomeSpan = document.getElementById('admin-nome-logado');
+    if (nomeSpan && nome) nomeSpan.textContent = nome;
+  }
+  // Alterna as seções do painel admin conforme o menu
   const links = document.querySelectorAll('.admin-link');
   const sections = document.querySelectorAll('.admin-section');
-
   links.forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
@@ -134,8 +162,29 @@ document.addEventListener('DOMContentLoaded', function() {
       sections.forEach(sec => {
         if (sec.id === 'admin-' + section) {
           sec.style.display = '';
-          if (section === 'dashboard') carregarDashboard();
-          if (section === 'usuarios') carregarUsuarios();
+          if (section === 'dashboard') {
+            carregarDashboard();
+            exibirNomePainel();
+          }
+          if (section === 'usuarios') {
+            carregarUsuarios();
+            // Move painel para a direita se necessário
+            const adminMain = document.querySelector('.admin-main');
+            if (adminMain) {
+              adminMain.scrollLeft = 200;
+            }
+          }
+          if (section === 'presencas') {
+            // Filtro mês
+            const filtroMes = document.getElementById('filtroMes');
+            let mesAtual = new Date();
+            let mesStr = `${mesAtual.getFullYear()}-${String(mesAtual.getMonth()+1).padStart(2,'0')}`;
+            filtroMes.value = mesStr;
+            carregarPresencasAdmin(mesStr);
+            filtroMes.onchange = function() {
+              carregarPresencasAdmin(this.value);
+            };
+          }
         } else {
           sec.style.display = 'none';
         }
@@ -144,4 +193,5 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   // Carregar dashboard ao abrir
   carregarDashboard();
+  exibirNomePainel();
 });

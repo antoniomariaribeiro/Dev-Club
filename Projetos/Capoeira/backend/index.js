@@ -4,14 +4,15 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 dotenv.config();
-import userRoutes from './routes/userRoutes.js';
 
+import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import galleryRoutes from './routes/galleryRoutes.js';
 import registrationRoutes from './routes/registrationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import presencaRoutes from './routes/presencaRoutes.js';
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,8 @@ app.use('/api/events', eventRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/registrations', registrationRoutes);
 app.use('/api/admin', adminRoutes);
+
+app.use('/api/presencas', presencaRoutes);
 app.use('/api/upload', uploadRoutes);
 
 mongoose.connect(process.env.MONGODB_URI, {

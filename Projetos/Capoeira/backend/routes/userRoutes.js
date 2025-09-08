@@ -27,8 +27,9 @@ router.post('/login', async (req, res) => {
     if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
     const valid = await bcrypt.compare(senha, user.senha);
     if (!valid) return res.status(401).json({ error: 'Senha incorreta' });
-    const token = jwt.sign({ id: user._id, nome: user.nome, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ message: 'Login realizado com sucesso', token, user: { id: user._id, nome: user.nome, email: user.email, isAdmin: user.isAdmin } });
+  const token = jwt.sign({ id: user._id, nome: user.nome, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  // Retorna token, isAdmin e nome diretamente, compatível com o frontend
+  res.json({ token, isAdmin: user.isAdmin, nome: user.nome });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

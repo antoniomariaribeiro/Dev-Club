@@ -1,10 +1,83 @@
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  background: transparent;
+  table-layout: fixed;
+}
+.admin-table td {
+  font-size: 1.01rem;
+  word-break: break-word;
+}
+.admin-table td.email-col {
+  max-width: 220px;
+  white-space: pre-line;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-break: anywhere;
+}
+.admin-table tr {
+  background: #26304a;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #1b263b22;
+}
+.admin-table th {
+  color: #f9d923;
+  font-size: 1.08rem;
+  background: none;
+}
+.admin-table th.acoes-col {
+  text-align: right;
+  padding-right: 32px;
+}
+
+.admin-table td .admin-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+  min-width: 120px;
+}
+  
+.admin-table button {
+  padding: 4px 10px;
+  font-size: 0.95rem;
+  border-radius: 5px;
+  margin: 0 2px 2px 0;
+  min-width: 100px;
+  max-width: 180px;
+  height: 32px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  background: #415a77;
+  color: #fff;
+  border: none;
+  box-shadow: 0 1px 4px #1b263b22;
+  transition: background 0.2s;
+}
+
+.admin-table button:hover {
+  background: #1b263b;
+  color: #f9d923;
+}
+
+/* Garante que textos com a classe .no-break não quebrem em mais de uma linha */
+.no-break {
+  white-space: nowrap;
+}
+
 /* Dashboard Admin */
 .dashboard-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 28px;
   margin: 32px 0 0 0;
+  max-width: 100vw;
+  overflow-x: auto;
 }
+
 .dashboard-card {
   background: #1b263b;
   border-radius: 12px;
@@ -15,6 +88,7 @@
   align-items: center;
   transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .dashboard-card:hover {
   transform: translateY(-4px) scale(1.03);
   box-shadow: 0 8px 32px 0 #1b263b66, 0 2px 12px 0 #0003;
@@ -28,15 +102,19 @@
   font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
+    font-weight: bold;
   margin-top: 8px;
 }
 /* ÁREA DO ALUNO */
+/* Corrige sobreposição e garante menu sempre clicável na área do aluno */
 .aluno-layout {
   display: flex;
   min-height: 100vh;
   background: linear-gradient(120deg, #0d1b2a 0%, #1b263b 100%);
+  position: relative;
 }
 .aluno-sidebar {
+    overflow-x: auto;
   width: 220px;
   background: #1b263b;
   color: #fff;
@@ -45,6 +123,18 @@
   align-items: center;
   padding: 32px 0 0 0;
   box-shadow: 2px 0 12px #1b263b22;
+  z-index: 10;
+}
+.aluno-main {
+  flex: 1;
+  padding: 150px 32px 48px 32px; /* Espaço intermediário no topo */
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
 }
 .aluno-logo {
   font-size: 1.5rem;
@@ -73,11 +163,7 @@
   background: #415a77;
   color: #f9d923;
 }
-.aluno-main {
-  flex: 1;
-  padding: 48px 32px;
-  color: #fff;
-}
+/* Removido: padding antigo duplicado. Usar apenas a versão com padding maior. */
 .aluno-section {
   background: #222b3a;
   border-radius: 12px;
@@ -88,6 +174,52 @@
 .aluno-section h1, .aluno-section h2 {
   color: #f9d923;
   margin-bottom: 18px;
+}
+.admin-main {
+  flex: 1;
+  padding: 120px 32px 48px 32px;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+.admin-section {
+  background: #222b3a;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px 0 #1b263b44, 0 1.5px 8px 0 #0002;
+  padding: 24px 12px 18px 12px;
+  margin-bottom: 28px;
+  margin-top: 0;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Botões menores na tabela admin */
+.admin-table button {
+  padding: 4px 10px;
+  font-size: 0.95rem;
+  border-radius: 5px;
+  margin: 0 2px;
+  min-width: 80px;
+  max-width: 120px;
+  height: 32px;
+}
+
+.admin-section h1, .admin-section h2 {
+  color: #f9d923;
+  margin-bottom: 22px;
+}
+.admin-link {
+  cursor: pointer;
+  user-select: none;
+}
+.admin-link:active {
+  background: #1b263b;
+  color: #f9d923;
 }
 .aluno-section button {
   background: #f9d923;
@@ -130,15 +262,15 @@
     padding: 10px 18px;
     font-size: 1rem;
   }
-  .aluno-main {
-    padding: 24px 4vw;
-  }
+  /* Removido: padding antigo duplicado em media query. Usar apenas a versão com padding maior. */
 }
 /* PAINEL ADMIN */
+/* Corrige sobreposição e garante menu sempre clicável */
 .admin-layout {
   display: flex;
   min-height: 100vh;
   background: linear-gradient(120deg, #0d1b2a 0%, #1b263b 100%);
+  position: relative;
 }
 .admin-sidebar {
   width: 220px;
@@ -149,6 +281,18 @@
   align-items: center;
   padding: 32px 0 0 0;
   box-shadow: 2px 0 12px #1b263b22;
+  z-index: 10;
+}
+.admin-main {
+  flex: 1;
+  padding: 120px 32px 48px 32px;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
 }
 .admin-logo {
   font-size: 1.5rem;
@@ -179,7 +323,7 @@
 }
 .admin-main {
   flex: 1;
-  padding: 48px 32px;
+  padding: 140px 32px 48px 32px; /* Mais espaçamento no topo da área do aluno */
   color: #fff;
 }
 .admin-section {
@@ -219,6 +363,9 @@
   }
   .admin-main {
     padding: 24px 4vw;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: auto;
   }
 }
 /* GALERIA */

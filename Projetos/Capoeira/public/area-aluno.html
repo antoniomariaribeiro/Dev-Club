@@ -16,7 +16,7 @@
           <li><a href="#" class="aluno-link" data-section="presenca">Presença</a></li>
           <li><a href="#" class="aluno-link" data-section="pagamentos">Pagamentos</a></li>
           <li><a href="#" class="aluno-link" data-section="materiais">Materiais</a></li>
-          <li><a href="#" class="aluno-link" data-section="videos">Vídeos de Treino</a></li>
+          <li><a href="#" class="aluno-link no-break" data-section="videos">Treinos</a></li>
         </ul>
       </nav>
     </aside>
@@ -29,7 +29,10 @@
       </section>
       <section id="aluno-presenca" class="aluno-section" style="display:none;">
         <h2>Histórico de Presença</h2>
-        <div id="listaPresenca">Em breve: presença detalhada.</div>
+  <button id="btnRegistrarPresenca" style="margin-bottom:24px;">Registrar Presença</button>
+  <div id="listaPresenca">Clique no botão acima para registrar sua presença.</div>
+  <!-- Histórico de presenças abaixo do menu lateral -->
+  <ul id="historicoPresenca" style="list-style:none;padding:0 0 0 32px;margin:32px 0 0 0;color:#f9d923;font-size:1.02rem;"></ul>
       </section>
       <section id="aluno-pagamentos" class="aluno-section" style="display:none;">
         <h2>Pagamentos</h2>
@@ -40,8 +43,8 @@
         <div id="listaMateriais">Em breve: PDFs, links e downloads.</div>
       </section>
       <section id="aluno-videos" class="aluno-section" style="display:none;">
-        <h2>Vídeos de Treino</h2>
-        <div id="listaVideos">Em breve: vídeos para estudo e prática.</div>
+  <h2 class="no-break">Treinos</h2>
+  <div id="listaVideos">Em breve: treinos para estudo e prática.</div>
       </section>
     </main>
   </div>

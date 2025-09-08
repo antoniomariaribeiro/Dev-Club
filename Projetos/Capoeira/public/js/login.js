@@ -1,3 +1,6 @@
+console.log('login.js carregado');
+
+
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value;
@@ -10,13 +13,26 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha })
     });
-    const data = await res.json();
+  const data = await res.json();
+  console.log('Resposta do backend:', data);
     if (res.ok) {
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('isAdmin', data.isAdmin ? 'true' : 'false');
-  msg.style.color = 'green';
-  msg.textContent = 'Login realizado com sucesso!';
-  setTimeout(() => window.location.href = 'index.html', 1000);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('isAdmin', data.isAdmin ? 'true' : 'false');
+      // Salva o nome do usuário diretamente da resposta do backend
+      if (data.nome) {
+        localStorage.setItem('nome', data.nome);
+      } else {
+        localStorage.removeItem('nome');
+      }
+      msg.style.color = 'green';
+      msg.textContent = 'Login realizado com sucesso!';
+      setTimeout(() => {
+        if (data.isAdmin) {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'area-aluno.html';
+        }
+      }, 1000);
     } else {
       msg.style.color = 'red';
       msg.textContent = data.error || 'Erro ao fazer login.';

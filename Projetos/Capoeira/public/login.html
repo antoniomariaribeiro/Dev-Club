@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Capoeira Nacional</title>
   <link rel="stylesheet" href="style/style.css">
 </head>
+
 <body>
   <div class="container">
+
     <h2>Login</h2>
     <form id="loginForm">
       <input type="email" id="loginEmail" placeholder="E-mail" required>
       <input type="password" id="loginSenha" placeholder="Senha" required>
       <button type="submit">Entrar</button>
     </form>
-    <p>Não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
+
+    <div class="extra-links">
+      <p>Não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
+      <p><a href="#" id="forgotPass">Esqueceu a senha?</a></p>
+    </div>
+    
+    <form id="recoverForm" class="hidden">
+      <h3>Recuperar Senha</h3>
+      <p>Digite seu e-mail e enviaremos instruções para redefinir sua senha.</p>
+      <input type="email" id="recoverEmail" placeholder="Seu e-mail" required>
+      <button type="submit">Enviar</button>
+    </form>
+
     <div id="loginMsg"></div>
+
   </div>
   <script src="js/login.js"></script>
 </body>
+
 </html>

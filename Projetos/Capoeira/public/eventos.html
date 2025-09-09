@@ -16,24 +16,27 @@
       <ul>
         <li><a href="index.html">Início</a></li>
         <li><a href="loja.html">Loja</a></li>
-        <li><a href="eventos.html">Eventos</a></li>
+        <li><a href="eventos.html" class="active">Eventos</a></li>
         <li><a href="galeria.html">Galeria</a></li>
         <li><a href="contato.html">Contato</a></li>
       </ul>
     </nav>
-    <a href="login.html" class="login-btn">Login</a>
+    <a href="login.html" id="loginBtn" class="login-btn">Login</a>
   </header>
+
   <main class="eventos-container">
-  <h1 style="color: #fff;">Eventos do Grupo Capoeira Nacional</h1>
+    <h1>Eventos do Grupo Capoeira Nacional</h1>
+
+    <!-- GRID DE EVENTOS -->
     <section id="eventos-lista">
       <div style="color:#fff;opacity:0.7;font-size:1.05em;text-align:center;margin:32px 0;">
         Nenhum evento cadastrado ainda.
       </div>
     </section>
-    <!-- Formulário de cadastro de evento (apenas para admin) -->
+
+    <!-- FORMULÁRIO DE CADASTRO DE EVENTO (apenas admin) -->
     <section id="form-evento" style="display:none;">
-  <!-- Formulário exclusivo para administradores -->
-  <h2 style="color: #fff;">Adicionar Novo Evento <span style="font-size:0.9em; color:#f9d923;">(Apenas para Admin)</span></h2>
+      <h2>Adicionar Novo Evento <span style="font-size:0.9em; color:#f9d923;">(Apenas para Admin)</span></h2>
       <form id="eventoForm">
         <input type="text" name="nome" placeholder="Nome do evento" required>
         <input type="date" name="data" required>
@@ -43,10 +46,15 @@
         <button type="submit">Cadastrar Evento</button>
       </form>
     </section>
+
+    <!-- BOTÃO LOGOUT ADMIN -->
+    <button id="logoutBtn" class="aluno-logout-fixed" style="display:none;">Logout</button>
   </main>
+
   <footer>
     <p>&copy; 2025 Capoeira Nacional. Todos os direitos reservados.</p>
   </footer>
+
   <script src="js/eventos.js"></script>
 </body>
 </html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Sorteador</title>
+</head>
+<body>
+    <h1>Sorteador</h1>
+
+    <div class="card">
+        <div class="fields">
+            <div class="input-group">
+                <label>Total de resultados</label><br>
+                <input type="number" value="1" id="totalResultadosInput">
+            </div>
+            <div class="input-group">
+                <label>Menor valor</label><br>
+                <input type="number" value="1" id="menorValorInput">
+            </div>
+            <div class="input-group">
+                <label>Maior valor</label><br>
+                <input type="number" value="10" id="maiorValorInput">
+            </div>
+            <button onclick="sortear()">Sortear</button>
+        </div>
+        <div class="result">
+            <h2>Resultado</h2>
+            <div class="results-values">
+                <div class="result-value">12</div>
+                <!--<div class="result-value">20</div>-->
+            </div>
+        </div>
+    </div>
+    
+</body>
+<script src="script.js"></script>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=League+Gothic&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital@0;1&display=swap');
+    </style>
+    <title>Dev - Game</title>
+</head>
+
+<body>
+    <div class="caixa" onclick="abrir()">
+        <img src="./src/Games.png">
+
+        <h1>O que você encontra aqui</h1>
+
+        <p>
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Corporis minima dolores, quas consequatur ipsa
+            saepe
+            blanditiis voluptatum et nulla quidem, enim deleniti vel numquam tenetur, quibusdam voluptatem magnam
+            repellendus labore?
+        </p>
+        <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente aut ex aliquam dolores ad dicta. Pariatur,
+            rem? Cupiditate alias similique tempore possimus totam aliquid omnis voluptatibus beatae cum deserunt?
+            Inventore.
+        </p>
+    </div>
+
+    <button onclick="abrir()">Entrar em contato</button>
+
+    <form action="https://formsubmit.co/your@email.com" method="POST">
+        <input type="text" name="name" required placeholder="Nome">
+        <input type="email" name="email" required placeholder="Email">
+        <textarea type="text" name="duvida" placeholder="Sua duvida aqui..."></textarea>
+        <button type="submit">Enviar</button>
+        <button onclick="fechar()" type="button" class="voltar">Voltar</button>
+    </form>
+</body>
+
+<script src="script.js"></script>
+
+</html>

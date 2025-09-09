@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Área do Aluno | Capoeira Nacional</title>
   <link rel="stylesheet" href="style/style.css">
 </head>
+
 <body>
   <div class="aluno-layout">
     <aside class="aluno-sidebar">
@@ -21,33 +23,79 @@
       </nav>
     </aside>
     <main class="aluno-main">
+
+      <!-- PERFIL -->
       <section id="aluno-perfil" class="aluno-section">
-        <h1>Bem-vindo, <span id="alunoNome">Aluno</span>!</h1>
-        <p>Turma: <span id="alunoTurma">-</span></p>
-        <p>Faixa: <span id="alunoFaixa">-</span></p>
-        <button id="btnAlterarDados">Alterar Dados</button>
+        <div class="aluno-card aluno-perfil-card">
+          <div class="perfil-top">
+            <img id="alunoFoto" class="aluno-foto" src="img/aluno.png" alt="Foto do aluno">
+            <div class="perfil-info">
+              <h1>Bem-vindo, <span id="alunoNome">Aluno</span>!</h1>
+              <p>Turma: <span id="alunoTurma">-</span></p>
+              <p>Faixa: <span id="alunoFaixa">-</span></p>
+              <button id="btnAlterarDados">Alterar Dados</button>
+            </div>
+          </div>
+          <form id="aluno-perfil-form" class="perfil-form" style="display:none;margin-top:24px;">
+            <div class="perfil-foto-box">
+              <img id="aluno-perfil-foto" src="img/aluno.png" alt="Foto de perfil" class="perfil-foto">
+              <input type="file" id="aluno-perfil-foto-input" accept="image/*">
+            </div>
+            <label for="aluno-perfil-nome">Nome:</label>
+            <input type="text" id="aluno-perfil-nome" name="nome" required>
+            <label for="aluno-perfil-email">Email:</label>
+            <input type="email" id="aluno-perfil-email" name="email" required>
+            <label for="aluno-perfil-cpf">CPF:</label>
+            <input type="text" id="aluno-perfil-cpf" name="cpf" required>
+            <label for="aluno-perfil-telefone">Telefone:</label>
+            <input type="text" id="aluno-perfil-telefone" name="telefone" required>
+            <button type="submit">Salvar Alterações</button>
+            <button type="button" id="btnCancelarEdicao" style="margin-left:12px;">Cancelar</button>
+          </form>
+        </div>
       </section>
+
+      <!-- PRESENÇA -->
       <section id="aluno-presenca" class="aluno-section" style="display:none;">
-        <h2>Histórico de Presença</h2>
-  <button id="btnRegistrarPresenca" style="margin-bottom:24px;">Registrar Presença</button>
-  <div id="listaPresenca">Clique no botão acima para registrar sua presença.</div>
-  <!-- Histórico de presenças abaixo do menu lateral -->
-  <ul id="historicoPresenca" style="list-style:none;padding:0 0 0 32px;margin:32px 0 0 0;color:#f9d923;font-size:1.02rem;"></ul>
+        <div class="aluno-card">
+          <h2>Histórico de Presença</h2>
+          <button id="btnRegistrarPresenca">Registrar Presença</button>
+          <div id="listaPresenca" style="margin-top:16px;">Clique no botão acima para registrar sua presença.</div>
+          <ul id="historicoPresenca"></ul>
+        </div>
       </section>
+
+      <!-- PAGAMENTOS -->
       <section id="aluno-pagamentos" class="aluno-section" style="display:none;">
-        <h2>Pagamentos</h2>
-        <div id="listaPagamentos">Em breve: mensalidades e status.</div>
+        <div class="aluno-card">
+          <h2>Pagamentos</h2>
+          <div id="listaPagamentos">Em breve: mensalidades e status.</div>
+        </div>
       </section>
+
+      <!-- MATERIAIS -->
       <section id="aluno-materiais" class="aluno-section" style="display:none;">
-        <h2>Materiais Exclusivos</h2>
-        <div id="listaMateriais">Em breve: PDFs, links e downloads.</div>
+        <div class="aluno-card">
+          <h2>Materiais Exclusivos</h2>
+          <div id="listaMateriais">Em breve: PDFs, links e downloads.</div>
+        </div>
       </section>
+
+      <!-- TREINOS -->
       <section id="aluno-videos" class="aluno-section" style="display:none;">
-  <h2 class="no-break">Treinos</h2>
-  <div id="listaVideos">Em breve: treinos para estudo e prática.</div>
+        <div class="aluno-card">
+          <h2>Treinos</h2>
+          <div id="listaVideos">Em breve: treinos para estudo e prática.</div>
+        </div>
       </section>
+
     </main>
   </div>
-  <script src="js/aluno.js"></script>
+
+  <button id="btnSair" class="logout-btn aluno-logout-fixed">Sair</button>
+
 </body>
+
+<script src="js/aluno.js"></script>
+
 </html>

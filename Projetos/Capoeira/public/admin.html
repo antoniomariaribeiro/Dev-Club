@@ -1,80 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin | Capoeira Nacional</title>
   <link rel="stylesheet" href="style/style.css">
 </head>
+
 <body>
-  <div class="admin-layout">
-    <aside class="admin-sidebar">
-      <div class="admin-logo">Admin</div>
-      <nav>
-        <ul>
-          <li><a href="#" class="admin-link" data-section="dashboard">Dashboard</a></li>
-          <li><a href="#" class="admin-link" data-section="usuarios">Usuários/Alunos</a></li>
-          <li><a href="#" class="admin-link" data-section="presencas">Presenças</a></li>
-          <li><a href="#" class="admin-link" data-section="eventos">Eventos</a></li>
-          <li><a href="#" class="admin-link" data-section="galeria">Galeria</a></li>
-          <li><a href="#" class="admin-link" data-section="loja">Loja</a></li>
-          <li><a href="#" class="admin-link" data-section="contato">Mensagens</a></li>
-        </ul>
-      </nav>
-    </aside>
-    <main class="admin-main">
-  <section id="admin-dashboard" class="admin-section">
-    <div style="margin-bottom: 24px; text-align: right;">
-      <span id="admin-nome-logado" style="font-size:1.1rem;color:#f9d923;font-weight:bold;"></span>
+  <div class="page-container">
+    <!-- Topbar -->
+    <div class="user-topbar">
+      <img id="admin-foto-logado" class="user-photo" src="img/logo.png" alt="Foto do usuário">
+      <span id="admin-nome-logado" class="admin-nome-logado"></span>
+      <button id="logout-btn" class="logout-btn">Sair</button>
     </div>
-    <h1>Bem-vindo ao Painel Administrativo</h1>
-    <div class="dashboard-cards">
-      <div class="dashboard-card">
-        <h3>Total de Alunos</h3>
-        <span id="dashboard-total-alunos" class="dashboard-number">-</span>
-      </div>
-      <div class="dashboard-card">
-        <h3>Total de Eventos</h3>
-        <span id="dashboard-total-eventos" class="dashboard-number">-</span>
-      </div>
-      <div class="dashboard-card">
-        <h3>Total de Produtos</h3>
-        <span id="dashboard-total-produtos" class="dashboard-number">-</span>
-      </div>
-      <div class="dashboard-card">
-        <h3>Inscrições em Eventos</h3>
-        <span id="dashboard-total-inscricoes" class="dashboard-number">-</span>
-      </div>
-            <main class="admin-main">
-    <p style="margin-top:32px;">Selecione uma opção no menu para gerenciar o site.</p>
-  </section>
-  <section id="admin-usuarios" class="admin-section" style="display:none;">
-    <h2>Gestão de Usuários/Alunos</h2>
-    <div id="usuarios-lista">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>CPF</th>
-            <th>Telefone</th>
-            <th>Admin</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="usuarios-tbody">
-          <tr><td colspan="6" style="text-align:center;opacity:0.7;">Carregando usuários...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-      <section id="admin-presencas" class="admin-section" style="display:none;">
-        <h2>Histórico de Presença dos Alunos</h2>
-        <div style="margin-bottom:16px;">
+
+    <!-- Layout principal -->
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <aside class="admin-sidebar">
+        <div class="admin-logo">Admin</div>
+        <nav>
+          <ul>
+            <li><a href="#" class="admin-link" data-section="dashboard">Dashboard</a></li>
+            <li><a href="#" class="admin-link" data-section="usuarios">Usuários/Alunos</a></li>
+            <li><a href="#" class="admin-link" data-section="presencas">Presenças</a></li>
+            <li><a href="#" class="admin-link" data-section="loja">Loja</a></li>
+            <li><a href="#" class="admin-link" data-section="eventos">Eventos</a></li>
+            <li><a href="#" class="admin-link" data-section="perfil">Perfil</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Conteúdo -->
+      <main class="admin-main">
+
+        <!-- Dashboard -->
+        <section id="admin-dashboard" class="admin-section">
+          <h1>Bem-vindo ao Painel Administrativo</h1>
+          <div class="dashboard-cards">
+            <div class="dashboard-card">
+              <h3>Total de Alunos</h3>
+              <span id="dashboard-total-alunos">-</span>
+            </div>
+            <div class="dashboard-card">
+              <h3>Total de Eventos</h3>
+              <span id="dashboard-total-eventos">-</span>
+            </div>
+            <div class="dashboard-card">
+              <h3>Total de Produtos</h3>
+              <span id="dashboard-total-produtos">-</span>
+            </div>
+            <div class="dashboard-card">
+              <h3>Inscrições em Eventos</h3>
+              <span id="dashboard-total-inscricoes">-</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Usuários -->
+        <section id="admin-usuarios" class="admin-section" style="display:none;">
+          <h2>Gestão de Usuários/Alunos</h2>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>Admin</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="usuarios-tbody">
+              <tr>
+                <td colspan="6" style="text-align:center;opacity:0.7;">Carregando usuários...</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Presenças -->
+        <section id="admin-presencas" class="admin-section" style="display:none;">
+          <h2>Histórico de Presença</h2>
           <label for="filtroMes">Filtrar por mês:</label>
           <input type="month" id="filtroMes" />
-        </div>
-        <div id="tabela-presencas-container">
           <table class="admin-table" id="tabela-presencas">
             <thead>
               <tr>
@@ -85,28 +97,84 @@
               </tr>
             </thead>
             <tbody id="tbody-presencas">
-              <tr><td colspan="4" style="text-align:center;opacity:0.7;">Carregando presenças...</td></tr>
+              <tr>
+                <td colspan="4" style="text-align:center;opacity:0.7;">Carregando presenças...</td>
+              </tr>
             </tbody>
           </table>
-        </div>
-      </section>
-      <section id="admin-galeria" class="admin-section" style="display:none;">
-        <h2>Gerenciar Galeria</h2>
-        <p>Em breve: listagem, upload e exclusão de fotos e vídeos.</p>
-      </section>
-      <section id="admin-loja" class="admin-section" style="display:none;">
-        <h2>Gerenciar Loja</h2>
-        <p>Em breve: produtos, estoque e pedidos.</p>
-      </section>
-      <section id="admin-contato" class="admin-section" style="display:none;">
-        <h2>Mensagens de Contato</h2>
-                    <div style="margin-bottom: 24px; text-align: right;">
-                      <span id="admin-nome-logado" style="font-size:1.1rem;color:#f9d923;font-weight:bold;"></span>
-                    </div>
-        <p>Em breve: visualizar e responder mensagens recebidas pelo site.</p>
-      </section>
-    </main>
+        </section>
+
+        <!-- Loja -->
+        <section id="admin-loja" class="admin-section" style="display:none;">
+          <h2>Gestão da Loja</h2>
+          <form id="produtoForm" class="produto-form" style="margin-bottom:24px;">
+            <label for="produtoNome">Nome do Produto:</label>
+            <input type="text" id="produtoNome" name="produtoNome" required>
+            <label for="produtoDescricao">Descrição:</label>
+            <input type="text" id="produtoDescricao" name="produtoDescricao" required>
+            <label for="produtoPreco">Preço:</label>
+            <input type="text" id="produtoPreco" name="produtoPreco" required placeholder="R$ 0,00">
+            <label for="produtoImagem">Imagem:</label>
+            <input type="file" id="produtoImagem" name="produtoImagem" accept="image/*" required>
+            <button type="submit">Adicionar Produto</button>
+          </form>
+          <div id="admin-produtos" class="admin-loja-container"></div>
+        </section>
+
+        <!-- Eventos -->
+        <section id="admin-eventos" class="admin-section" style="display:none;">
+          <h2>Gerenciar Eventos</h2>
+
+          <!-- Formulário de cadastro -->
+          <form id="eventoForm" class="evento-form">
+            <label for="nome">Nome do Evento:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="data">Data:</label>
+            <input type="date" id="data" name="data" required>
+
+            <label for="local">Local:</label>
+            <input type="text" id="local" name="local" required>
+
+            <label for="descricao">Descrição:</label>
+            <textarea id="descricao" name="descricao" rows="4" required></textarea>
+
+            <label for="imagem">Imagem do Evento:</label>
+            <input type="file" id="imagem" name="imagem" accept="image/*" required>
+
+            <button type="submit">Adicionar Evento</button>
+          </form>
+
+          <!-- Lista de eventos cadastrados -->
+          <div id="eventos-lista" class="eventos-lista"></div>
+        </section>
+
+        <!-- Perfil -->
+        <section id="admin-perfil" class="admin-section" style="display:none;">
+          <h2>Perfil</h2>
+          <form id="admin-perfil-form" class="perfil-form">
+            <div class="perfil-foto-box">
+              <img id="admin-perfil-foto" src="img/logo.png" alt="Foto de perfil" class="perfil-foto">
+              <input type="file" id="admin-perfil-foto-input" accept="image/*">
+            </div>
+            <label for="admin-perfil-nome">Nome:</label>
+            <input type="text" id="admin-perfil-nome" name="nome" required>
+            <label for="admin-perfil-email">Email:</label>
+            <input type="email" id="admin-perfil-email" name="email" required>
+            <label for="admin-perfil-cpf">CPF:</label>
+            <input type="text" id="admin-perfil-cpf" name="cpf" required>
+            <label for="admin-perfil-telefone">Telefone:</label>
+            <input type="text" id="admin-perfil-telefone" name="telefone" required>
+            <button type="submit">Salvar Alterações</button>
+          </form>
+        </section>
+
+      </main>
+    </div>
   </div>
-  <script src="js/admin.js"></script>
+
 </body>
+
+<script src="js/admin.js"></script>
+
 </html>

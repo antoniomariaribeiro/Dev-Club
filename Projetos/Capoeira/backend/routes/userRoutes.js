@@ -7,6 +7,7 @@ import { auth, isAdmin } from '../middleware/auth.js';
 const router = express.Router();
 
 // Cadastro de usuário
+
 router.post('/register', async (req, res) => {
   try {
     const { nome, email, cpf, telefone, senha } = req.body;
@@ -49,9 +50,14 @@ router.get('/', auth, isAdmin, async (req, res) => {
 });
 
 // Tornar usuário admin
+
+// Alternar status admin/aluno
 router.patch('/:id/admin', auth, isAdmin, async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, { isAdmin: true }, { new: true }).select('-senha');
+    let isAdminValue = req.body && typeof req.body.isAdmin !== 'undefined' ? req.body.isAdmin : true;
+    // Garante booleano
+    isAdminValue = isAdminValue === true || isAdminValue === 'true';
+    const user = await User.findByIdAndUpdate(req.params.id, { isAdmin: isAdminValue }, { new: true }).select('-senha');
     if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
     res.json(user);
   } catch (err) {
@@ -60,15 +66,7 @@ router.patch('/:id/admin', auth, isAdmin, async (req, res) => {
 });
 
 // Remover admin de usuário
-router.patch('/:id/remove-admin', auth, isAdmin, async (req, res) => {
-  try {
-    const user = await User.findByIdAndUpdate(req.params.id, { isAdmin: false }, { new: true }).select('-senha');
-    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
-    res.json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// (rota removida, agora tudo é feito pela rota PATCH /:id/admin)
 
 // Deletar usuário
 router.delete('/:id', auth, isAdmin, async (req, res) => {
@@ -78,5 +76,23 @@ router.delete('/:id', auth, isAdmin, async (req, res) => {
     res.json({ message: 'Usuário removido com sucesso' });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Atualizar perfil do usuário (aluno ou admin)
+router.patch('/:id/perfil', auth, async (req, res) => {
+  try {
+    const { nome, email, cpf, telefone, foto } = req.body;
+    const update = {};
+    if (nome) update.nome = nome;
+    if (email) update.email = email;
+    if (cpf) update.cpf = cpf;
+    if (telefone) update.telefone = telefone;
+    if (foto) update.foto = foto;
+    const user = await User.findByIdAndUpdate(req.params.id, update, { new: true }).select('-senha');
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });

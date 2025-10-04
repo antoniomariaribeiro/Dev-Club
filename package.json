@@ -1,0 +1,25 @@
+{
+  "name": "capoeira-pro",
+  "version": "1.0.0",
+  "description": "Site profissional de capoeira com sistema completo de gerenciamento",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently \"yarn dev:server\" \"yarn dev:client\"",
+    "dev:server": "cd server && nodemon server.js",
+    "dev:client": "cd client && yarn start",
+    "build": "cd client && yarn build",
+    "start": "cd server && node server.js",
+    "install:all": "yarn install && cd server && yarn install && cd ../client && yarn install"
+  },
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^10.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

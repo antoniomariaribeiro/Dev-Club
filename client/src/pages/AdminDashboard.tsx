@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { 
   Users, Calendar, ShoppingCart, Image, Settings, 
-  Activity, Monitor, TrendingUp 
+  Activity, TrendingUp 
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import RealTimeDashboard from '../components/admin/RealTimeDashboard';
 import AdminAnalytics from '../components/admin/AdminAnalytics';
-import SimpleDashboard from '../components/admin/SimpleDashboard';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -88,28 +87,16 @@ const AdminDashboard: React.FC = () => {
 
   const mainViews = [
     {
-      id: 'simple',
-      label: 'Dashboard Simples (Teste)',
-      icon: Monitor,
-      description: 'Dashboard com dados reais da API'
-    },
-    {
       id: 'realtime',
-      label: 'Dashboard Tempo Real',
+      label: 'Dashboard Completo',
       icon: Activity,
-      description: 'Monitore a atividade em tempo real'
+      description: 'Dashboard avançado com todas as funcionalidades'
     },
     {
       id: 'analytics',
       label: 'Análises Avançadas',
       icon: TrendingUp,
       description: 'Relatórios e gráficos detalhados'
-    },
-    {
-      id: 'overview',
-      label: 'Visão Geral',
-      icon: Monitor,
-      description: 'Resumo executivo do sistema'
     }
   ];
 
@@ -154,9 +141,6 @@ const AdminDashboard: React.FC = () => {
       case 'realtime':
         return <RealTimeDashboard />;
       
-      case 'simple':
-        return <SimpleDashboard />;
-      
       case 'analytics':
         return (
           <div style={{ padding: '20px' }}>
@@ -174,105 +158,8 @@ const AdminDashboard: React.FC = () => {
           </div>
         );
       
-      case 'overview':
-        return (
-          <div style={{ padding: '20px', color: 'white' }}>
-            <h2 style={{ 
-              marginBottom: '20px',
-              fontSize: '2rem',
-              background: 'linear-gradient(45deg, #fff, #e0e7ff)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>
-              Visão Geral do Sistema
-            </h2>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '20px'
-            }}>
-              <motion.div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '15px',
-                  padding: '25px',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  textAlign: 'center'
-                }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '10px' }}>
-                  248
-                </div>
-                <div style={{ opacity: 0.8 }}>Alunos Ativos</div>
-              </motion.div>
-              
-              <motion.div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '15px',
-                  padding: '25px',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  textAlign: 'center'
-                }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '10px' }}>
-                  12
-                </div>
-                <div style={{ opacity: 0.8 }}>Eventos Este Mês</div>
-              </motion.div>
-              
-              <motion.div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '15px',
-                  padding: '25px',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  textAlign: 'center'
-                }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '10px' }}>
-                  R$ 15.4k
-                </div>
-                <div style={{ opacity: 0.8 }}>Vendas do Mês</div>
-              </motion.div>
-              
-              <motion.div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '15px',
-                  padding: '25px',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  textAlign: 'center'
-                }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '10px' }}>
-                  94%
-                </div>
-                <div style={{ opacity: 0.8 }}>Taxa de Presença</div>
-              </motion.div>
-            </div>
-          </div>
-        );
-      
       default:
-        return (
-          <div style={{ padding: '20px', color: 'white' }}>
-            <h2>Funcionalidade em desenvolvimento</h2>
-            <p>Esta seção será implementada em breve.</p>
-          </div>
-        );
+        return <RealTimeDashboard />;
     }
   };
 

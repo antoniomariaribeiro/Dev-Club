@@ -84,7 +84,7 @@ const MainContent = styled.div`
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
-  const [activeView, setActiveView] = useState('simple');
+  const [activeView, setActiveView] = useState('realtime');
 
   const mainViews = [
     {

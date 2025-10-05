@@ -8,6 +8,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import RealTimeDashboard from '../components/admin/RealTimeDashboard';
 import AdminAnalytics from '../components/admin/AdminAnalytics';
+import SimpleDashboard from '../components/admin/SimpleDashboard';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -83,9 +84,15 @@ const MainContent = styled.div`
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
-  const [activeView, setActiveView] = useState('realtime');
+  const [activeView, setActiveView] = useState('simple');
 
   const mainViews = [
+    {
+      id: 'simple',
+      label: 'Dashboard Simples (Teste)',
+      icon: Monitor,
+      description: 'Dashboard com dados reais da API'
+    },
     {
       id: 'realtime',
       label: 'Dashboard Tempo Real',
@@ -146,6 +153,9 @@ const AdminDashboard: React.FC = () => {
     switch (activeView) {
       case 'realtime':
         return <RealTimeDashboard />;
+      
+      case 'simple':
+        return <SimpleDashboard />;
       
       case 'analytics':
         return (

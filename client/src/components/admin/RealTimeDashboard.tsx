@@ -5,12 +5,22 @@ import {
   Users, Calendar, ShoppingCart, TrendingUp, 
   Eye, Clock, UserPlus, Wifi, RotateCw
 } from 'lucide-react';
+import { adminService } from '../../services/admin';
+import DashboardCharts from './DashboardCharts';
+import RealTimeNotifications from './RealTimeNotifications';
+import AdvancedMetrics from './AdvancedMetrics';
+import AdvancedFilters from './AdvancedFiltersComponent';
 
 // Animações
 const pulse = keyframes`
   0% { box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.7); }
   70% { box-shadow: 0 0 0 10px rgba(74, 144, 226, 0); }
   100% { box-shadow: 0 0 0 0 rgba(74, 144, 226, 0); }
+`;
+
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 `;
 
 
@@ -21,6 +31,14 @@ const DashboardContainer = styled(motion.div)`
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   color: white;
+  
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 10px;
+  }
 `;
 
 const Header = styled.div`
@@ -28,6 +46,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
 `;
 
 const Title = styled.h1`
@@ -37,6 +62,14 @@ const Title = styled.h1`
   background: linear-gradient(45deg, #fff, #e0e7ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.6rem;
+  }
 `;
 
 const StatusIndicator = styled.div`
@@ -59,9 +92,19 @@ const StatusDot = styled.div<{ isOnline: boolean }>`
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
 `;
 
 const StatCard = styled(motion.div)`
@@ -72,6 +115,16 @@ const StatCard = styled(motion.div)`
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 15px;
+    border-radius: 10px;
+  }
 `;
 
 const StatHeader = styled.div`
@@ -118,6 +171,16 @@ const RealtimeSection = styled.div`
   grid-template-columns: 2fr 1fr;
   gap: 20px;
   margin-bottom: 30px;
+  
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
 `;
 
 const ActivityFeed = styled(motion.div)`
@@ -245,15 +308,17 @@ interface Activity {
 
 const RealTimeDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
-    totalUsers: 1247,
-    activeEvents: 8,
-    totalSales: 3456,
-    revenue: 89500,
-    todayVisits: 2341,
-    onlineUsers: 23,
-    newRegistrations: 15,
-    pendingOrders: 7
+    totalUsers: 0,
+    activeEvents: 0,
+    totalSales: 0,
+    revenue: 0,
+    todayVisits: 0,
+    onlineUsers: 0,
+    newRegistrations: 0,
+    pendingOrders: 0
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [activities, setActivities] = useState<Activity[]>([
     {
@@ -287,6 +352,38 @@ const RealTimeDashboard: React.FC = () => {
   const [isOnline] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [autoRefresh, setAutoRefresh] = useState(true);
+
+  // Buscar dados reais do dashboard
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await adminService.getDashboardStats();
+      
+      // Mapear dados da API para interface local
+      setStats({
+        totalUsers: data.totalUsers || 0,
+        activeEvents: data.activeEvents || 0,
+        totalSales: data.totalProducts || 0, // Usando produtos como proxy para vendas
+        revenue: data.totalRevenue || 0,
+        todayVisits: Math.floor(Math.random() * 1000) + 500, // Mock para visitas
+        onlineUsers: Math.floor(Math.random() * 50) + 10, // Mock para usuários online
+        newRegistrations: data.newUsersThisMonth || 0,
+        pendingOrders: Math.floor(Math.random() * 20) + 5 // Mock para pedidos pendentes
+      });
+      setLastUpdate(new Date());
+    } catch (err: any) {
+      console.error('Erro ao buscar estatísticas:', err);
+      setError('Erro ao carregar dados do dashboard');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Carregar dados na inicialização
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
 
   // Simular atualizações em tempo real
   useEffect(() => {
@@ -348,6 +445,10 @@ const RealTimeDashboard: React.FC = () => {
     setAutoRefresh(!autoRefresh);
   };
 
+  const handleRefresh = async () => {
+    await fetchDashboardStats();
+  };
+
   return (
     <DashboardContainer
       initial={{ opacity: 0 }}
@@ -356,12 +457,50 @@ const RealTimeDashboard: React.FC = () => {
     >
       <Header>
         <Title>Dashboard em Tempo Real</Title>
-        <StatusIndicator>
-          <StatusDot isOnline={isOnline} />
-          <span>{isOnline ? 'Online' : 'Offline'}</span>
-          <Wifi size={16} />
-        </StatusIndicator>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button
+            onClick={handleRefresh}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: 'none',
+              borderRadius: '8px',
+              color: 'white',
+              padding: '8px 12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+            disabled={loading}
+          >
+            <RotateCw 
+              size={14} 
+              style={{ 
+                animation: loading ? `${spin} 1s linear infinite` : 'none' 
+              }} 
+            />
+            Atualizar
+          </button>
+          <StatusIndicator>
+            <StatusDot isOnline={isOnline} />
+            <span>{isOnline ? 'Online' : 'Offline'}</span>
+            <Wifi size={16} />
+          </StatusIndicator>
+        </div>
       </Header>
+
+      {error && (
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          borderRadius: '8px',
+          padding: '12px',
+          marginBottom: '20px',
+          color: '#ef4444'
+        }}>
+          ❌ {error}
+        </div>
+      )}
 
       <StatsGrid>
         <StatCard
@@ -373,7 +512,7 @@ const RealTimeDashboard: React.FC = () => {
               <Users />
             </StatIcon>
             <div style={{ textAlign: 'right' }}>
-              <StatValue>{stats.totalUsers.toLocaleString()}</StatValue>
+              <StatValue>{loading ? '...' : stats.totalUsers.toLocaleString()}</StatValue>
               <StatLabel>Usuários Totais</StatLabel>
             </div>
           </StatHeader>
@@ -392,7 +531,7 @@ const RealTimeDashboard: React.FC = () => {
               <Eye />
             </StatIcon>
             <div style={{ textAlign: 'right' }}>
-              <StatValue>{stats.onlineUsers}</StatValue>
+              <StatValue>{loading ? '...' : stats.onlineUsers}</StatValue>
               <StatLabel>Usuários Online</StatLabel>
             </div>
           </StatHeader>
@@ -411,7 +550,7 @@ const RealTimeDashboard: React.FC = () => {
               <Calendar />
             </StatIcon>
             <div style={{ textAlign: 'right' }}>
-              <StatValue>{stats.activeEvents}</StatValue>
+              <StatValue>{loading ? '...' : stats.activeEvents}</StatValue>
               <StatLabel>Eventos Ativos</StatLabel>
             </div>
           </StatHeader>
@@ -430,7 +569,7 @@ const RealTimeDashboard: React.FC = () => {
               <ShoppingCart />
             </StatIcon>
             <div style={{ textAlign: 'right' }}>
-              <StatValue>R$ {(stats.revenue / 1000).toFixed(1)}k</StatValue>
+              <StatValue>R$ {loading ? '...' : (stats.revenue / 1000).toFixed(1)}k</StatValue>
               <StatLabel>Receita Total</StatLabel>
             </div>
           </StatHeader>
@@ -516,6 +655,61 @@ const RealTimeDashboard: React.FC = () => {
           </QuickStatItem>
         </QuickStats>
       </RealtimeSection>
+
+      {/* Filtros Avançados */}
+      <AdvancedFilters 
+        onFiltersChange={(filters) => {
+          console.log('Filtros aplicados:', filters);
+          // Aqui você pode implementar a lógica para filtrar os dados
+        }}
+        showUserFilters={true}
+        showEventFilters={true}
+        showDateFilters={true}
+      />
+
+      {/* Métricas Avançadas */}
+      <div style={{ marginTop: '30px' }}>
+        <h2 style={{ 
+          color: 'white', 
+          marginBottom: '20px', 
+          fontSize: '1.8rem',
+          background: 'linear-gradient(45deg, #fff, #e0e7ff)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          📈 Métricas Avançadas
+        </h2>
+        <AdvancedMetrics stats={{
+          totalUsers: stats.totalUsers,
+          activeEvents: stats.activeEvents,
+          revenue: stats.revenue,
+          newRegistrations: stats.newRegistrations
+        }} />
+      </div>
+
+      {/* Seção de Gráficos */}
+      <div style={{ marginTop: '30px' }}>
+        <h2 style={{ 
+          color: 'white', 
+          marginBottom: '20px', 
+          fontSize: '1.8rem',
+          background: 'linear-gradient(45deg, #fff, #e0e7ff)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          📊 Análises e Gráficos
+        </h2>
+        <DashboardCharts stats={{
+          totalUsers: stats.totalUsers,
+          activeEvents: stats.activeEvents,
+          totalSales: stats.totalSales,
+          revenue: stats.revenue,
+          newRegistrations: stats.newRegistrations
+        }} />
+      </div>
+
+      {/* Sistema de Notificações */}
+      <RealTimeNotifications />
     </DashboardContainer>
   );
 };

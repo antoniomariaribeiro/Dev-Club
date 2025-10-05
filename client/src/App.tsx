@@ -19,7 +19,8 @@ import Shop from './pages/Shop';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/AdminLogin';
+import ProfessionalAdminDashboard from './pages/ProfessionalAdminDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 
 // Create React Query client
@@ -55,6 +56,9 @@ function App() {
                 <Route path="/contato" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
                 
+                {/* Rota de Login Admin */}
+                <Route path="/admin" element={<AdminLogin />} />
+                
                 {/* Rotas Protegidas */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
@@ -62,9 +66,9 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                <Route path="/admin" element={
+                <Route path="/admin/dashboard" element={
                   <ProtectedRoute requireRole="admin">
-                    <AdminDashboard />
+                    <ProfessionalAdminDashboard />
                   </ProtectedRoute>
                 } />
                 

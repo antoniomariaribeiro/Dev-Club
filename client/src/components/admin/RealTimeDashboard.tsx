@@ -10,6 +10,11 @@ import DashboardCharts from './DashboardCharts';
 import RealTimeNotifications from './RealTimeNotifications';
 import AdvancedMetrics from './AdvancedMetrics';
 import AdvancedFilters from './AdvancedFiltersComponent';
+import CapoeiraCharts from './CapoeiraCharts';
+import CapoeiraMetrics from './CapoeiraMetrics';
+import CapoeiraAnimations from './CapoeiraAnimations';
+import CapoeiraAdminFunctions from './CapoeiraAdminFunctions';
+import CapoeiraPerformanceOptimization from './CapoeiraPerformanceOptimization';
 
 // Animações
 const pulse = keyframes`
@@ -667,6 +672,26 @@ const RealTimeDashboard: React.FC = () => {
         showDateFilters={true}
       />
 
+      {/* Métricas Específicas da Capoeira */}
+      <div style={{ marginTop: '30px' }}>
+        <h2 style={{ 
+          color: 'white', 
+          marginBottom: '20px', 
+          fontSize: '1.8rem',
+          background: 'linear-gradient(45deg, #fff, #e0e7ff)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          🥋 Métricas da Academia de Capoeira
+        </h2>
+        <CapoeiraMetrics stats={{
+          totalUsers: stats.totalUsers,
+          activeEvents: stats.activeEvents,
+          revenue: stats.revenue,
+          newRegistrations: stats.newRegistrations
+        }} />
+      </div>
+
       {/* Métricas Avançadas */}
       <div style={{ marginTop: '30px' }}>
         <h2 style={{ 
@@ -682,6 +707,47 @@ const RealTimeDashboard: React.FC = () => {
         <AdvancedMetrics stats={{
           totalUsers: stats.totalUsers,
           activeEvents: stats.activeEvents,
+          revenue: stats.revenue,
+          newRegistrations: stats.newRegistrations
+        }} />
+      </div>
+
+      {/* Animações Interativas da Capoeira */}
+      <div style={{ marginTop: '30px' }}>
+        <h2 style={{ 
+          color: 'white', 
+          marginBottom: '20px', 
+          fontSize: '1.8rem',
+          background: 'linear-gradient(45deg, #ff6b35, #f7931e, #ffcd3c)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          ⚡ Animações Interativas da Academia
+        </h2>
+        <CapoeiraAnimations stats={{
+          totalUsers: stats.totalUsers,
+          activeEvents: stats.activeEvents,
+          revenue: stats.revenue,
+          newRegistrations: stats.newRegistrations
+        }} />
+      </div>
+
+      {/* Gráficos Específicos da Capoeira */}
+      <div style={{ marginTop: '30px' }}>
+        <h2 style={{ 
+          color: 'white', 
+          marginBottom: '20px', 
+          fontSize: '1.8rem',
+          background: 'linear-gradient(45deg, #fff, #e0e7ff)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          🥋 Gráficos da Academia de Capoeira
+        </h2>
+        <CapoeiraCharts stats={{
+          totalUsers: stats.totalUsers,
+          activeEvents: stats.activeEvents,
+          totalSales: stats.totalSales,
           revenue: stats.revenue,
           newRegistrations: stats.newRegistrations
         }} />
@@ -706,6 +772,36 @@ const RealTimeDashboard: React.FC = () => {
           revenue: stats.revenue,
           newRegistrations: stats.newRegistrations
         }} />
+      </div>
+
+      {/* Funcionalidades Administrativas */}
+      <div style={{ marginTop: '30px' }}>
+        <h2 style={{ 
+          color: 'white', 
+          marginBottom: '20px', 
+          fontSize: '1.8rem',
+          background: 'linear-gradient(45deg, #10b981, #059669)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          🔧 Gestão da Academia
+        </h2>
+        <CapoeiraAdminFunctions />
+      </div>
+
+      {/* Otimizações de Performance */}
+      <div style={{ marginTop: '30px' }}>
+        <h2 style={{ 
+          color: 'white', 
+          marginBottom: '20px', 
+          fontSize: '1.8rem',
+          background: 'linear-gradient(45deg, #3b82f6, #1d4ed8)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          🚀 Otimizações de Performance
+        </h2>
+        <CapoeiraPerformanceOptimization />
       </div>
 
       {/* Sistema de Notificações */}

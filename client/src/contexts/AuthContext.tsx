@@ -45,9 +45,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<void> => {
     try {
-      console.log('AuthContext: Iniciando login...');
+      console.log('🔐 AuthContext: Iniciando processo de login...', { email });
       setLoading(true);
+      
       const response = await authService.login(email, password);
+      
+      console.log('✅ AuthContext: Resposta do login recebida:', {
+        success: response.success,
+        hasToken: !!response.token,
+        hasUser: !!response.user
+      });
       
       console.log('AuthContext: Resposta do login:', response);
       

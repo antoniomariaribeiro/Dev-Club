@@ -105,9 +105,17 @@ router.post('/register', registerValidation, async (req, res) => {
 // @access  Public
 router.post('/login', loginValidation, async (req, res) => {
   try {
+    console.log('🔑 Tentativa de login iniciada:', {
+      email: req.body.email,
+      timestamp: new Date().toISOString(),
+      ip: req.ip || req.connection.remoteAddress
+    });
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Erro de validação no login:', errors.array());
       return res.status(400).json({
+        success: false,
         message: 'Dados inválidos',
         errors: errors.array()
       });
@@ -115,32 +123,61 @@ router.post('/login', loginValidation, async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Buscar usuário
+    // Buscar usuário no banco de dados
+    console.log('🔍 Procurando usuário:', email);
     const user = await User.findOne({ where: { email } });
+    
     if (!user) {
-      return res.status(400).json({
-        message: 'Credenciais inválidas'
+      console.log('❌ Usuário não encontrado:', email);
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
       });
     }
 
+    console.log('✅ Usuário encontrado:', {
+      id: user.id,
+      name: user.name,
+      role: user.role,
+      is_active: user.is_active
+    });
+
     // Verificar se usuário está ativo
     if (!user.is_active) {
-      return res.status(400).json({
+      console.log('❌ Usuário inativo:', user.id);
+      return res.status(403).json({
+        success: false,
         message: 'Conta desativada. Entre em contato com o administrador.'
       });
     }
 
     // Verificar senha
+    console.log('🔍 Validando senha...');
     const isMatch = await user.validatePassword(password);
+    
     if (!isMatch) {
-      return res.status(400).json({
-        message: 'Credenciais inválidas'
+      console.log('❌ Senha incorreta para usuário:', email);
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
       });
     }
 
+    // Gerar token JWT
+    console.log('✅ Credenciais válidas, gerando token...');
     const token = generateToken(user.id);
 
+    // Atualizar último login
+    await user.update({ last_login: new Date() });
+
+    console.log('✅ Login realizado com sucesso:', {
+      userId: user.id,
+      email: user.email,
+      role: user.role
+    });
+
     res.json({
+      success: true,
       message: 'Login realizado com sucesso',
       token,
       user: {
@@ -164,24 +201,63 @@ router.post('/login', loginValidation, async (req, res) => {
 // @access  Private
 router.get('/me', authMiddleware, async (req, res) => {
   try {
+    console.log('👤 Obtendo dados do usuário autenticado:', {
+      userId: req.user.id,
+      email: req.user.email,
+      timestamp: new Date().toISOString()
+    });
+
+    // Buscar dados atualizados do usuário
+    const user = await User.findByPk(req.user.id);
+    
+    if (!user) {
+      console.log('❌ Usuário não encontrado no banco:', req.user.id);
+      return res.status(404).json({
+        success: false,
+        message: 'Usuário não encontrado'
+      });
+    }
+
+    if (!user.is_active) {
+      console.log('❌ Usuário inativo:', req.user.id);
+      return res.status(403).json({
+        success: false,
+        message: 'Conta desativada'
+      });
+    }
+
+    console.log('✅ Dados do usuário obtidos com sucesso:', {
+      userId: user.id,
+      role: user.role
+    });
+
     res.json({
+      success: true,
       user: {
-        id: req.user.id,
-        name: req.user.name,
-        email: req.user.email,
-        phone: req.user.phone,
-        role: req.user.role,
-        avatar: req.user.avatar,
-        birth_date: req.user.birth_date,
-        address: req.user.address,
-        emergency_contact: req.user.emergency_contact,
-        emergency_phone: req.user.emergency_phone,
-        created_at: req.user.created_at
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        avatar: user.avatar,
+        birth_date: user.birth_date,
+        address: user.address,
+        emergency_contact: user.emergency_contact,
+        emergency_phone: user.emergency_phone,
+        created_at: user.created_at,
+        last_login: user.last_login,
+        is_active: user.is_active
       }
     });
+
   } catch (error) {
-    console.error('Erro ao obter dados do usuário:', error);
+    console.error('❌ Erro ao obter dados do usuário:', {
+      error: error.message,
+      userId: req.user?.id,
+      stack: error.stack
+    });
     res.status(500).json({
+      success: false,
       message: 'Erro interno do servidor'
     });
   }

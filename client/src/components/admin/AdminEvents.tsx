@@ -827,7 +827,7 @@ const AdminEvents: React.FC = () => {
   const loadRegistrations = useCallback(async (eventId: number) => {
     setIsLoadingRegistrations(true);
     try {
-      const response = await api.get(`/admin/events/${eventId}/registrations`);
+      const response = await api.get(`/api/admin/events/${eventId}/registrations`);
       setRegistrations(response.data.registrations);
       setRegistrationsStats(response.data.summary);
     } catch (error) {
@@ -976,7 +976,7 @@ const AdminEvents: React.FC = () => {
     if (!selectedEventForRegistrations) return;
 
     try {
-      await api.put(`/admin/events/${selectedEventForRegistrations.id}/registrations/${registrationId}`, {
+      await api.put(`/api/admin/events/${selectedEventForRegistrations.id}/registrations/${registrationId}`, {
         status: newStatus,
         notes: notes || ''
       });
@@ -995,7 +995,7 @@ const AdminEvents: React.FC = () => {
     if (!window.confirm('Tem certeza que deseja remover esta inscrição?')) return;
 
     try {
-      await api.delete(`/admin/events/${selectedEventForRegistrations.id}/registrations/${registrationId}`);
+      await api.delete(`/api/admin/events/${selectedEventForRegistrations.id}/registrations/${registrationId}`);
       showToast('success', 'Inscrição removida com sucesso!');
       loadRegistrations(selectedEventForRegistrations.id);
       loadEvents(); // Reload to update event stats

@@ -11,31 +11,31 @@ export const eventService = {
     featured?: boolean;
     search?: string;
   }) => {
-    const response = await api.get('/events', { params });
+    const response = await api.get('/api/events', { params });
     return response.data;
   },
 
   // Obter evento por ID
   getEvent: async (id: number): Promise<{ event: Event }> => {
-    const response = await api.get(`/events/${id}`);
+    const response = await api.get(`/api/events/${id}`);
     return response.data;
   },
 
   // Criar evento (Admin)
   createEvent: async (eventData: Partial<Event>) => {
-    const response = await api.post('/events', eventData);
+    const response = await api.post('/api/events', eventData);
     return response.data;
   },
 
   // Atualizar evento (Admin)
   updateEvent: async (id: number, eventData: Partial<Event>) => {
-    const response = await api.put(`/events/${id}`, eventData);
+    const response = await api.put(`/api/events/${id}`, eventData);
     return response.data;
   },
 
   // Deletar evento (Admin)
   deleteEvent: async (id: number) => {
-    const response = await api.delete(`/events/${id}`);
+    const response = await api.delete(`/api/events/${id}`);
     return response.data;
   },
 
@@ -48,13 +48,13 @@ export const eventService = {
       emergency_phone?: string;
     }
   ): Promise<{ registration: EventRegistration }> => {
-    const response = await api.post(`/events/${eventId}/register`, registrationData);
+    const response = await api.post(`/api/events/${eventId}/register`, registrationData);
     return response.data;
   },
 
   // Cancelar inscrição
   cancelRegistration: async (eventId: number) => {
-    const response = await api.delete(`/events/${eventId}/register`);
+    const response = await api.delete(`/api/events/${eventId}/register`);
     return response.data;
   }
 };

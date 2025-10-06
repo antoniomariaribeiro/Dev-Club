@@ -1,8 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Star, Search } from 'lucide-react';
+import { ShoppingCart, Search } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { theme, Container, Button, Input } from '../styles/theme';
+import api from '../services/api';
+
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  short_description?: string;
+  price: number;
+  old_price?: number;
+  category: string;
+  brand?: string;
+  sku?: string;
+  stock_quantity: number;
+  weight?: number;
+  images?: string[];
+  status: 'active' | 'inactive';
+  is_featured: boolean;
+  tags?: string[];
+  created_at: string;
+  updated_at: string;
+}
 
 const ShopContainer = styled.div`
   padding: ${theme.spacing.xxl} 0;
@@ -184,115 +206,51 @@ const ProductCard = styled(motion.div)`
 `;
 
 const Shop: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('todos');
   const [searchTerm, setSearchTerm] = useState('');
 
   const categories = [
     { key: 'todos', label: 'Todos os Produtos' },
-    { key: 'uniformes', label: 'Uniformes' },
     { key: 'instrumentos', label: 'Instrumentos' },
+    { key: 'roupas', label: 'Roupas' },
     { key: 'acessorios', label: 'Acessórios' },
+    { key: 'musica', label: 'Música' },
     { key: 'livros', label: 'Livros & CDs' },
   ];
 
-  const mockProducts = [
-    {
-      id: 1,
-      name: 'Abadá Tradicional Branco',
-      description: 'Uniforme tradicional de capoeira em algodão 100%. Resistente e confortável para treinos.',
-      image: 'https://images.unsplash.com/photo-1574755393849-623942496936?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'uniformes',
-      currentPrice: 89.90,
-      oldPrice: 120.00,
-      rating: 4.8,
-      reviews: 45,
-      inStock: true,
-      featured: true,
-    },
-    {
-      id: 2,
-      name: 'Berimbau Completo',
-      description: 'Berimbau tradicional com verga, cabaça, arame e acessórios. Ideal para rodas e treinos.',
-      image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'instrumentos',
-      currentPrice: 299.90,
-      oldPrice: null,
-      rating: 4.9,
-      reviews: 28,
-      inStock: true,
-      featured: false,
-    },
-    {
-      id: 3,
-      name: 'Cordão Graduação Verde',
-      description: 'Cordão oficial para graduação. Material resistente e cores vibrantes.',
-      image: 'https://images.unsplash.com/photo-1571019613519-1b42c8e94393?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'acessorios',
-      currentPrice: 25.90,
-      oldPrice: 35.00,
-      rating: 4.6,
-      reviews: 67,
-      inStock: true,
-      featured: false,
-    },
-    {
-      id: 4,
-      name: 'Atabaque Médio',
-      description: 'Atabaque artesanal em madeira e couro natural. Som potente para rodas.',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'instrumentos',
-      currentPrice: 459.90,
-      oldPrice: null,
-      rating: 4.7,
-      reviews: 19,
-      inStock: false,
-      featured: true,
-    },
-    {
-      id: 5,
-      name: 'Camiseta Academia Nacional',
-      description: 'Camiseta oficial da Academia Capoeira Nacional. 100% algodão.',
-      image: 'https://images.unsplash.com/photo-1574755393849-623942496936?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      category: 'uniformes',
-      currentPrice: 39.90,
-      oldPrice: 49.90,
-      rating: 4.4,
-      reviews: 89,
-      inStock: true,
-      featured: false,
-    },
-    {
-      id: 6,
-      name: 'Pandeiro Profissional',
-      description: 'Pandeiro com pele natural e platinelas de qualidade. Som cristalino.',
-      image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      category: 'instrumentos',
-      currentPrice: 189.90,
-      oldPrice: 220.00,
-      rating: 4.8,
-      reviews: 34,
-      inStock: true,
-      featured: false,
-    },
-  ];
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  const filteredProducts = mockProducts.filter(product => {
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/api/products', {
+        params: {
+          limit: 50,
+          status: 'active'
+        }
+      });
+      setProducts(response.data.products || response.data);
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error);
+      toast.error('Erro ao carregar produtos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredProducts = products.filter(product => {
     const matchesCategory = activeFilter === 'todos' || product.category === activeFilter;
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (product.short_description && product.short_description.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <Star
-        key={index}
-        size={14}
-        fill={index < Math.floor(rating) ? theme.colors.secondary : 'none'}
-        color={index < Math.floor(rating) ? theme.colors.secondary : theme.colors.text.secondary}
-      />
-    ));
-  };
+
 
   return (
     <ShopContainer>
@@ -338,65 +296,90 @@ const Shop: React.FC = () => {
         </FilterSection>
 
         <ProductsGrid>
-          {filteredProducts.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div style={{ position: 'relative' }}>
-                {product.featured && (
-                  <div className="product-badge">Destaque</div>
-                )}
-                <img src={product.image} alt={product.name} className="product-image" />
-              </div>
-              
-              <div className="product-content">
-                <div className="product-category">{categories.find(c => c.key === product.category)?.label}</div>
-                <h3 className="product-title">{product.name}</h3>
-                <p className="product-description">{product.description}</p>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', gridColumn: '1 / -1' }}>
+              <div>Carregando produtos...</div>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', gridColumn: '1 / -1' }}>
+              <h3>Nenhum produto encontrado</h3>
+              <p>Tente ajustar os filtros ou termo de busca.</p>
+            </div>
+          ) : (
+            filteredProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div style={{ position: 'relative' }}>
+                  {product.is_featured && (
+                    <div className="product-badge">Destaque</div>
+                  )}
+                  <img 
+                    src={product.images?.[0] ? `/uploads/products/${product.images[0]}` : '/default-product.png'}
+                    alt={product.name} 
+                    className="product-image" 
+                  />
+                </div>
                 
-                <div className="product-rating">
-                  <div className="stars">
-                    {renderStars(product.rating)}
+                <div className="product-content">
+                  <div className="product-category">
+                    {categories.find(c => c.key === product.category)?.label || product.category}
                   </div>
-                  <span className="rating-text">
-                    {product.rating} ({product.reviews} avaliações)
-                  </span>
-                </div>
+                  <h3 className="product-title">{product.name}</h3>
+                  <p className="product-description">
+                    {product.short_description || product.description}
+                  </p>
+                  
+                  {product.tags && product.tags.length > 0 && (
+                    <div className="product-tags" style={{ marginBottom: '12px' }}>
+                      {product.tags.slice(0, 3).map((tag, idx) => (
+                        <span key={idx} style={{ 
+                          fontSize: '11px', 
+                          background: theme.colors.primary + '20', 
+                          color: theme.colors.primary,
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          marginRight: '4px'
+                        }}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-                <div className="product-price">
-                  <div>
-                    <span className="current-price">R$ {product.currentPrice.toFixed(2)}</span>
-                    {product.oldPrice && (
-                      <span className="old-price" style={{ marginLeft: '8px' }}>
-                        R$ {product.oldPrice.toFixed(2)}
-                      </span>
-                    )}
+                  <div className="product-price">
+                    <div>
+                      <span className="current-price">R$ {product.price.toFixed(2)}</span>
+                      {product.old_price && (
+                        <span className="old-price" style={{ marginLeft: '8px' }}>
+                          R$ {product.old_price.toFixed(2)}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <Button 
-                  className="add-to-cart"
-                  variant={product.inStock ? 'primary' : 'outline'}
-                  disabled={!product.inStock}
-                >
-                  <ShoppingCart size={18} />
-                  {product.inStock ? 'Adicionar ao Carrinho' : 'Indisponível'}
-                </Button>
-              </div>
-            </ProductCard>
-          ))}
+                  <div style={{ fontSize: '12px', color: theme.colors.text.secondary, marginBottom: '12px' }}>
+                    Estoque: {product.stock_quantity} unidades
+                    {product.brand && ` • Marca: ${product.brand}`}
+                  </div>
+
+                  <Button 
+                    className="add-to-cart"
+                    variant={product.stock_quantity > 0 ? 'primary' : 'outline'}
+                    disabled={product.stock_quantity === 0}
+                  >
+                    <ShoppingCart size={18} />
+                    {product.stock_quantity > 0 ? 'Adicionar ao Carrinho' : 'Sem Estoque'}
+                  </Button>
+                </div>
+              </ProductCard>
+            ))
+          )}
         </ProductsGrid>
-
-        {filteredProducts.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <h3>Nenhum produto encontrado</h3>
-            <p>Tente ajustar os filtros ou termo de busca.</p>
-          </div>
-        )}
       </Container>
     </ShopContainer>
   );

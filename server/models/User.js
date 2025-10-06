@@ -36,7 +36,7 @@ const User = sequelize.define('User', {
     allowNull: true
   },
   role: {
-    type: DataTypes.ENUM('admin', 'student'),
+    type: DataTypes.ENUM('admin', 'student', 'instructor', 'manager'),
     defaultValue: 'student',
     allowNull: false
   },
@@ -47,6 +47,11 @@ const User = sequelize.define('User', {
   is_active: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'inactive', 'pending', 'suspended'),
+    defaultValue: 'pending',
+    allowNull: false
   },
   birth_date: {
     type: DataTypes.DATEONLY,

@@ -79,9 +79,10 @@ async function seedDatabase() {
         location: [`Quadra Principal`, `Espaço Cultural`, `Parque da Cidade`, `Academia Central`][Math.floor(Math.random() * 4)],
         max_participants: [20, 30, 50, 100][Math.floor(Math.random() * 4)],
         price: [0, 25, 50, 80][Math.floor(Math.random() * 4)],
-        image_url: `/uploads/events/event${i + 1}.jpg`,
-        category: ['workshop', 'roda', 'batizado', 'apresentacao'][Math.floor(Math.random() * 4)],
-        status: 'active'
+        image: `/uploads/events/event${i + 1}.jpg`,
+        level: ['beginner', 'intermediate', 'advanced', 'all'][Math.floor(Math.random() * 4)],
+        status: 'published',
+        is_featured: Math.random() > 0.7
       });
       events.push(event);
     }

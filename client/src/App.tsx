@@ -20,7 +20,8 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AdminLogin from './pages/AdminLogin';
-import ProfessionalAdminDashboard from './pages/ProfessionalAdminDashboard';
+import CompleteAdminDashboard from './pages/CompleteAdminDashboard';
+
 import StudentDashboard from './pages/StudentDashboard';
 
 // Create React Query client
@@ -34,6 +35,17 @@ const queryClient = new QueryClient({
   },
 });
 
+// Layout para páginas com Header e Footer
+const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <>
+    <Header />
+    <main style={{ minHeight: 'calc(100vh - 120px)' }}>
+      {children}
+    </main>
+    <Footer />
+  </>
+);
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,68 +54,111 @@ function App() {
           <Router>
             <GlobalStyles />
             <div className="App">
-            <Header />
-            
-            <main style={{ minHeight: 'calc(100vh - 120px)' }}>
               <Routes>
-                {/* Rotas Públicas */}
-                <Route path="/" element={<Home />} />
-                <Route path="/sobre" element={<About />} />
-                <Route path="/eventos" element={<Events />} />
-                <Route path="/eventos/:id" element={<EventDetail />} />
-                <Route path="/galeria" element={<Gallery />} />
-                <Route path="/loja" element={<Shop />} />
-                <Route path="/contato" element={<Contact />} />
-                <Route path="/login" element={<Login />} />
-                
-                {/* Rota de Login Admin */}
+                {/* Rotas de Admin (SEM Header/Footer - tela inteira) */}
                 <Route path="/admin" element={<AdminLogin />} />
-                
-                {/* Rotas Protegidas */}
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/*" element={
+                  <ProtectedRoute requireRole="admin">
+                    <CompleteAdminDashboard />
                   </ProtectedRoute>
                 } />
-                
                 <Route path="/admin/dashboard" element={
                   <ProtectedRoute requireRole="admin">
-                    <ProfessionalAdminDashboard />
+                    <CompleteAdminDashboard />
                   </ProtectedRoute>
+                } />
+                <Route path="/painel" element={
+                  <ProtectedRoute requireRole="admin">
+                    <CompleteAdminDashboard />
+                  </ProtectedRoute>
+                } />
+
+                
+                {/* Rotas com Layout Principal (COM Header/Footer) */}
+                <Route path="/" element={
+                  <MainLayout>
+                    <Home />
+                  </MainLayout>
+                } />
+                <Route path="/sobre" element={
+                  <MainLayout>
+                    <About />
+                  </MainLayout>
+                } />
+                <Route path="/eventos" element={
+                  <MainLayout>
+                    <Events />
+                  </MainLayout>
+                } />
+                <Route path="/eventos/:id" element={
+                  <MainLayout>
+                    <EventDetail />
+                  </MainLayout>
+                } />
+                <Route path="/galeria" element={
+                  <MainLayout>
+                    <Gallery />
+                  </MainLayout>
+                } />
+                <Route path="/loja" element={
+                  <MainLayout>
+                    <Shop />
+                  </MainLayout>
+                } />
+                <Route path="/contato" element={
+                  <MainLayout>
+                    <Contact />
+                  </MainLayout>
+                } />
+                <Route path="/login" element={
+                  <MainLayout>
+                    <Login />
+                  </MainLayout>
+                } />
+                
+                {/* Rotas Protegidas com Layout */}
+                <Route path="/dashboard" element={
+                  <MainLayout>
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  </MainLayout>
                 } />
                 
                 <Route path="/aluno" element={
-                  <ProtectedRoute requireRole="student">
-                    <StudentDashboard />
-                  </ProtectedRoute>
+                  <MainLayout>
+                    <ProtectedRoute requireRole="student">
+                      <StudentDashboard />
+                    </ProtectedRoute>
+                  </MainLayout>
                 } />
                 
                 {/* 404 */}
                 <Route path="*" element={
-                  <div style={{ padding: '40px', textAlign: 'center' }}>
-                    <h2>Página não encontrada</h2>
-                    <p>A página que você procura não existe.</p>
-                    <a href="/">← Voltar ao Início</a>
-                  </div>
+                  <MainLayout>
+                    <div style={{ padding: '40px', textAlign: 'center' }}>
+                      <h2>Página não encontrada</h2>
+                      <p>A página que você procura não existe.</p>
+                      <a href="/">← Voltar ao Início</a>
+                    </div>
+                  </MainLayout>
                 } />
               </Routes>
-            </main>
+            </div>
             
-            <Footer />
-          </div>
-          
-          <Toaster 
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              },
-            }}
-          />
-        </Router>
-      </AuthProvider>
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+              }}
+            />
+          </Router>
+        </AuthProvider>
       </NotificationProvider>
     </QueryClientProvider>
   );

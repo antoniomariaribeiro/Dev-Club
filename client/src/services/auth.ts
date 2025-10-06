@@ -5,13 +5,13 @@ export const authService = {
   // Login
   login: async (email: string, password: string) => {
     console.log('🔑 authService: Iniciando login...', {
-      endpoint: `${api.defaults.baseURL}/auth/login`,
+      endpoint: `${api.defaults.baseURL}/api/auth/login`,
       email,
       timestamp: new Date().toISOString()
     });
     
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/api/auth/login', { email, password });
       
       console.log('✅ authService: Login bem-sucedido:', {
         success: response.data.success,
@@ -49,7 +49,7 @@ export const authService = {
 
   // Registro
   register: async (userData: RegisterData) => {
-    const response = await api.post('/auth/register', userData);
+    const response = await api.post('/api/auth/register', userData);
     return response.data;
   },
 
@@ -58,7 +58,7 @@ export const authService = {
     console.log('👤 authService: Obtendo dados do usuário...');
     
     try {
-      const response = await api.get('/auth/me');
+      const response = await api.get('/api/auth/me');
       
       console.log('✅ authService: Dados do usuário obtidos:', {
         success: response.data.success,
@@ -85,7 +85,7 @@ export const authService = {
 
   // Atualizar perfil
   updateProfile: async (userData: Partial<User>) => {
-    const response = await api.put('/auth/update-profile', userData);
+    const response = await api.put('/api/auth/update-profile', userData);
     return response.data;
   },
 

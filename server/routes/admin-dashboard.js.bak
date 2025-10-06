@@ -13,11 +13,6 @@ router.use(adminMiddleware);
 // @access  Admin
 router.get('/stats', async (req, res) => {
   try {
-    // Data de início do mês atual
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const startOfLastMonth = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
-    const endOfLastMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
-
     // Calcular estatísticas em paralelo
     const [
       totalUsers,
@@ -27,11 +22,7 @@ router.get('/stats', async (req, res) => {
       newUsersThisMonth,
       activeEvents,
       totalRevenue,
-      monthlyRevenue,
-      lastMonthUsers,
-      lastMonthRevenue,
-      usersByStatus,
-      usersByRole
+      monthlyRevenue
     ] = await Promise.all([
       User.count({ where: { role: { [Op.ne]: 'admin' } } }),
       Event.count(),
@@ -40,85 +31,31 @@ router.get('/stats', async (req, res) => {
       User.count({
         where: {
           role: { [Op.ne]: 'admin' },
-          created_at: { [Op.gte]: startOfMonth }
+          created_at: {
+            [Op.gte]: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+          }
         }
       }),
       Event.count({ where: { status: 'active' } }),
       EventRegistration.sum('amount_paid') || 0,
       EventRegistration.sum('amount_paid', {
         where: {
-          created_at: { [Op.gte]: startOfMonth }
-        }
-      }) || 0,
-      // Usuários do mês passado para cálculo de crescimento
-      User.count({
-        where: {
-          role: { [Op.ne]: 'admin' },
           created_at: {
-            [Op.between]: [startOfLastMonth, endOfLastMonth]
+            [Op.gte]: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
           }
         }
-      }),
-      // Receita do mês passado
-      EventRegistration.sum('amount_paid', {
-        where: {
-          created_at: {
-            [Op.between]: [startOfLastMonth, endOfLastMonth]
-          }
-        }
-      }) || 0,
-      // Usuários por status
-      User.findAll({
-        attributes: ['status', [require('sequelize').fn('COUNT', '*'), 'count']],
-        where: { role: { [Op.ne]: 'admin' } },
-        group: ['status'],
-        raw: true
-      }),
-      // Usuários por função
-      User.findAll({
-        attributes: ['role', [require('sequelize').fn('COUNT', '*'), 'count']],
-        where: { role: { [Op.ne]: 'admin' } },
-        group: ['role'],
-        raw: true
-      })
+      }) || 0
     ]);
-
-    // Calcular crescimento
-    const userGrowth = lastMonthUsers > 0 
-      ? ((newUsersThisMonth - lastMonthUsers) / lastMonthUsers * 100).toFixed(1)
-      : newUsersThisMonth > 0 ? 100 : 0;
-
-    const revenueGrowth = lastMonthRevenue > 0 
-      ? ((monthlyRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(1)
-      : monthlyRevenue > 0 ? 100 : 0;
-
-    // Transformar arrays em objetos
-    const statusBreakdown = usersByStatus.reduce((acc, item) => {
-      acc[item.status || 'active'] = parseInt(item.count);
-      return acc;
-    }, { active: 0, inactive: 0, pending: 0 });
-
-    const roleBreakdown = usersByRole.reduce((acc, item) => {
-      acc[item.role || 'user'] = parseInt(item.count);
-      return acc;
-    }, { user: 0, instructor: 0, member: 0 });
 
     const stats = {
       totalUsers,
       totalEvents,
       totalProducts,
       totalContacts,
-      totalRevenue: parseFloat(totalRevenue) || 0,
-      monthlyRevenue: parseFloat(monthlyRevenue) || 0,
+      totalRevenue,
+      monthlyRevenue,
       newUsersThisMonth,
-      activeEvents,
-      usersByStatus: statusBreakdown,
-      usersByRole: roleBreakdown,
-      growth: {
-        users: parseFloat(userGrowth),
-        revenue: parseFloat(revenueGrowth),
-        events: 0 // Pode ser calculado se necessário
-      }
+      activeEvents
     };
 
     res.json(stats);
@@ -158,18 +95,18 @@ router.get('/charts/:type', async (req, res) => {
 
     switch (type) {
       case 'users':
-        // Crescimento de usuários por mês (SQLite compatible)
+        // Crescimento de usuários por mês
         const userGrowth = await User.findAll({
           attributes: [
-            [User.sequelize.fn('strftime', '%Y-%m', User.sequelize.col('created_at')), 'month'],
+            [User.sequelize.fn('DATE_TRUNC', 'month', User.sequelize.col('created_at')), 'month'],
             [User.sequelize.fn('COUNT', '*'), 'count']
           ],
           where: {
             created_at: { [Op.gte]: startDate },
             role: { [Op.ne]: 'admin' }
           },
-          group: [User.sequelize.fn('strftime', '%Y-%m', User.sequelize.col('created_at'))],
-          order: [[User.sequelize.fn('strftime', '%Y-%m', User.sequelize.col('created_at')), 'ASC']]
+          group: [User.sequelize.fn('DATE_TRUNC', 'month', User.sequelize.col('created_at'))],
+          order: [[User.sequelize.fn('DATE_TRUNC', 'month', User.sequelize.col('created_at')), 'ASC']]
         });
 
         chartData = {
@@ -189,7 +126,6 @@ router.get('/charts/:type', async (req, res) => {
         const eventStats = await Event.findAll({
           include: [{
             model: EventRegistration,
-            as: 'registrations',
             attributes: ['payment_status', 'amount_paid'],
             required: false
           }],
@@ -298,8 +234,8 @@ router.get('/recent-activities', async (req, res) => {
       }),
       EventRegistration.findAll({
         include: [
-          { model: User, as: 'user', attributes: ['name'] },
-          { model: Event, as: 'event', attributes: ['title'] }
+          { model: User, attributes: ['name'] },
+          { model: Event, attributes: ['title'] }
         ],
         order: [['created_at', 'DESC']],
         limit: Math.ceil(limit / 4),
@@ -319,48 +255,32 @@ router.get('/recent-activities', async (req, res) => {
         type: 'user',
         title: 'Novo usuário cadastrado',
         description: `${user.name} se cadastrou na plataforma`,
-        userId: user.id,
-        userName: user.name,
         timestamp: user.created_at,
-        createdAt: user.created_at,
-        icon: '👤',
-        metadata: { email: user.email, status: user.status }
+        icon: '👤'
       })),
       ...recentEvents.map(event => ({
         id: `event-${event.id}`,
         type: 'event',
         title: 'Novo evento criado',
         description: `Evento "${event.title}" foi criado`,
-        userId: null,
-        userName: 'Sistema',
         timestamp: event.created_at,
-        createdAt: event.created_at,
-        icon: '📅',
-        metadata: { eventTitle: event.title, eventId: event.id }
+        icon: '📅'
       })),
       ...recentRegistrations.map(reg => ({
         id: `registration-${reg.id}`,
         type: 'registration',
         title: 'Nova inscrição',
-        description: `${reg.user?.name} se inscreveu em "${reg.event?.title}"`,
-        userId: reg.user_id,
-        userName: reg.user?.name || 'Usuário desconhecido',
+        description: `${reg.User?.name} se inscreveu em "${reg.Event?.title}"`,
         timestamp: reg.created_at,
-        createdAt: reg.created_at,
-        icon: '✅',
-        metadata: { eventTitle: reg.event?.title, amount: reg.amount_paid }
+        icon: '✅'
       })),
       ...recentContacts.map(contact => ({
         id: `contact-${contact.id}`,
         type: 'contact',
         title: 'Novo contato',
         description: `${contact.name} enviou uma mensagem`,
-        userId: null,
-        userName: contact.name,
         timestamp: contact.created_at,
-        createdAt: contact.created_at,
-        icon: '💬',
-        metadata: { email: contact.email, message: contact.message }
+        icon: '💬'
       }))
     ];
 
@@ -456,23 +376,26 @@ router.get('/activity', async (req, res) => {
       });
     });
 
-    // Atividades simuladas de vendas
-    const simulatedSales = [
-      {
-        id: `sale-1-${Date.now()}`,
-        type: 'sale',
-        message: 'Venda de R$ 150,00 realizada',
-        time: '5 minutos atrás'
-      },
-      {
-        id: `sale-2-${Date.now()}`, 
-        type: 'sale',
-        message: 'Assinatura mensal renovada',
-        time: '12 minutos atrás'
-      }
-    ];
+    // Últimas inscrições
+    const recentRegistrations = await EventRegistration.findAll({
+      limit: 2,
+      order: [['created_at', 'DESC']],
+      include: [
+        { model: User, as: 'user', attributes: ['name'] },
+        { model: Event, as: 'event', attributes: ['title'] }
+      ]
+    });
 
-    activities.push(...simulatedSales);
+    recentRegistrations.forEach((reg, index) => {
+      const timeAgo = getTimeAgo(reg.created_at);
+      activities.push({
+        id: `registration-${index}-${Date.now()}`,
+        type: 'sale',
+        message: `${reg.user?.name} se inscreveu em "${reg.event?.title}"`,
+        time: timeAgo,
+        user: reg.user?.name
+      });
+    });
 
     // Ordenar por tempo (mais recente primeiro) e limitar
     res.json(activities.slice(0, 10));

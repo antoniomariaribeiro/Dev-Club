@@ -61,12 +61,12 @@ export interface GalleryFilters {
 export const adminService = {
   // Dashboard e Estatísticas
   getDashboardStats: async (): Promise<AdminStats> => {
-    const response = await api.get('/admin/dashboard/stats');
+    const response = await api.get('/api/admin/dashboard/stats');
     return response.data;
   },
 
   getChartData: async (type: 'users' | 'events' | 'revenue', period: string) => {
-    const response = await api.get(`/admin/dashboard/charts/${type}?period=${period}`);
+    const response = await api.get(`/api/admin/dashboard/charts/${type}?period=${period}`);
     return response.data;
   },
 
@@ -79,32 +79,32 @@ export const adminService = {
       }
     });
     
-    const response = await api.get(`/admin/users?${params.toString()}`);
+    const response = await api.get(`/api/admin/users?${params.toString()}`);
     return response.data;
   },
 
   getUserById: async (id: number) => {
-    const response = await api.get(`/admin/users/${id}`);
+    const response = await api.get(`/api/admin/users/${id}`);
     return response.data;
   },
 
   createUser: async (userData: any) => {
-    const response = await api.post('/admin/users', userData);
+    const response = await api.post('/api/admin/users', userData);
     return response.data;
   },
 
   updateUser: async (id: number, userData: any) => {
-    const response = await api.put(`/admin/users/${id}`, userData);
+    const response = await api.put(`/api/admin/users/${id}`, userData);
     return response.data;
   },
 
   deleteUser: async (id: number) => {
-    const response = await api.delete(`/admin/users/${id}`);
+    const response = await api.delete(`/api/admin/users/${id}`);
     return response.data;
   },
 
   getUserStats: async () => {
-    const response = await api.get('/admin/users/stats');
+    const response = await api.get('/api/admin/users/stats');
     return response.data;
   },
 
@@ -117,42 +117,42 @@ export const adminService = {
       }
     });
     
-    const response = await api.get(`/admin/events?${params.toString()}`);
+    const response = await api.get(`/api/admin/events?${params.toString()}`);
     return response.data;
   },
 
   getEventById: async (id: number) => {
-    const response = await api.get(`/admin/events/${id}`);
+    const response = await api.get(`/api/admin/events/${id}`);
     return response.data;
   },
 
   createEvent: async (eventData: any) => {
-    const response = await api.post('/admin/events', eventData);
+    const response = await api.post('/api/admin/events', eventData);
     return response.data;
   },
 
   updateEvent: async (id: number, eventData: any) => {
-    const response = await api.put(`/admin/events/${id}`, eventData);
+    const response = await api.put(`/api/admin/events/${id}`, eventData);
     return response.data;
   },
 
   deleteEvent: async (id: number) => {
-    const response = await api.delete(`/admin/events/${id}`);
+    const response = await api.delete(`/api/admin/events/${id}`);
     return response.data;
   },
 
   getEventRegistrations: async (eventId: number) => {
-    const response = await api.get(`/admin/events/${eventId}/registrations`);
+    const response = await api.get(`/api/admin/events/${eventId}/registrations`);
     return response.data;
   },
 
   updateEventRegistration: async (eventId: number, registrationId: number, data: any) => {
-    const response = await api.put(`/admin/events/${eventId}/registrations/${registrationId}`, data);
+    const response = await api.put(`/api/admin/events/${eventId}/registrations/${registrationId}`, data);
     return response.data;
   },
 
   getEventStats: async () => {
-    const response = await api.get('/admin/events/stats');
+    const response = await api.get('/api/admin/events/stats');
     return response.data;
   },
 
@@ -175,7 +175,7 @@ export const adminService = {
   },
 
   createProduct: async (productData: any) => {
-    const response = await api.post('/admin/products', productData);
+    const response = await api.post('/api/admin/products', productData);
     return response.data;
   },
 
@@ -190,12 +190,12 @@ export const adminService = {
   },
 
   getProductCategories: async () => {
-    const response = await api.get('/admin/products/categories');
+    const response = await api.get('/api/admin/products/categories');
     return response.data;
   },
 
   getProductStats: async () => {
-    const response = await api.get('/admin/products/stats');
+    const response = await api.get('/api/admin/products/stats');
     return response.data;
   },
 
@@ -213,37 +213,37 @@ export const adminService = {
       }
     });
     
-    const response = await api.get(`/admin/gallery?${params.toString()}`);
+    const response = await api.get(`/api/admin/gallery?${params.toString()}`);
     return response.data;
   },
 
   getGalleryItemById: async (id: number) => {
-    const response = await api.get(`/admin/gallery/${id}`);
+    const response = await api.get(`/api/admin/gallery/${id}`);
     return response.data;
   },
 
   createGalleryItem: async (galleryData: any) => {
-    const response = await api.post('/admin/gallery', galleryData);
+    const response = await api.post('/api/admin/gallery', galleryData);
     return response.data;
   },
 
   updateGalleryItem: async (id: number, galleryData: any) => {
-    const response = await api.put(`/admin/gallery/${id}`, galleryData);
+    const response = await api.put(`/api/admin/gallery/${id}`, galleryData);
     return response.data;
   },
 
   deleteGalleryItem: async (id: number) => {
-    const response = await api.delete(`/admin/gallery/${id}`);
+    const response = await api.delete(`/api/admin/gallery/${id}`);
     return response.data;
   },
 
   getGalleryCategories: async () => {
-    const response = await api.get('/admin/gallery/categories');
+    const response = await api.get('/api/admin/gallery/categories');
     return response.data;
   },
 
   getGalleryStats: async () => {
-    const response = await api.get('/admin/gallery/stats');
+    const response = await api.get('/api/admin/gallery/stats');
     return response.data;
   },
 
@@ -253,7 +253,7 @@ export const adminService = {
       formData.append(`files`, file);
     });
     
-    const response = await api.post('/admin/gallery/batch-upload', formData, {
+    const response = await api.post('/api/admin/gallery/batch-upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -262,7 +262,7 @@ export const adminService = {
   },
 
   batchUpdateGalleryCategory: async (ids: number[], category: string) => {
-    const response = await api.put('/admin/gallery/batch-update-category', {
+    const response = await api.put('/api/admin/gallery/batch-update-category', {
       ids,
       category
     });
@@ -288,7 +288,7 @@ export const adminService = {
   },
 
   createContact: async (contactData: any) => {
-    const response = await api.post('/admin/contacts', contactData);
+    const response = await api.post('/api/admin/contacts', contactData);
     return response.data;
   },
 
@@ -303,7 +303,7 @@ export const adminService = {
   },
 
   getContactStats: async () => {
-    const response = await api.get('/admin/contacts/stats');
+    const response = await api.get('/api/admin/contacts/stats');
     return response.data;
   },
 
@@ -313,7 +313,7 @@ export const adminService = {
     formData.append('file', file);
     formData.append('type', type);
     
-    const response = await api.post('/admin/upload', formData, {
+    const response = await api.post('/api/admin/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

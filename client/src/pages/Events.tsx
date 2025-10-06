@@ -1,9 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Users, Star } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Star, DollarSign } from 'lucide-react';
 import { theme, Container, Button } from '../styles/theme';
+import api from '../services/api';
+import { toast } from 'react-hot-toast';
 
+// ============ INTERFACES ============
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  event_date: string;
+  end_date?: string;
+  location: string;
+  price: number;
+  max_participants: number;
+  level?: string;
+  status: string;
+  is_featured: boolean;
+  image?: string;
+  requirements?: string;
+  what_to_bring?: string;
+  instructor?: string;
+  registrations_count?: number;
+  created_at: string;
+}
+
+// ============ STYLED COMPONENTS ============
 const EventsContainer = styled.div`
   padding: ${theme.spacing.xxl} 0;
 `;
@@ -61,162 +85,190 @@ const EventsGrid = styled.div`
   padding: ${theme.spacing.xl} 0;
 `;
 
-const EventCard = styled(motion.div)`
-  background: ${theme.colors.surface};
+const EventCard = styled(motion.div)<{ $featured?: boolean }>`
+  background: white;
   border-radius: ${theme.borderRadius.lg};
   overflow: hidden;
   box-shadow: ${theme.shadows.md};
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  border: ${props => props.$featured ? `3px solid ${theme.colors.primary}` : '1px solid #e0e0e0'};
 
   &:hover {
     transform: translateY(-5px);
-  }
-
-  .event-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  .event-content {
-    padding: ${theme.spacing.lg};
-  }
-
-  .event-badge {
-    background: ${theme.colors.secondary};
-    color: white;
-    padding: ${theme.spacing.xs} ${theme.spacing.sm};
-    border-radius: ${theme.borderRadius.sm};
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-bottom: ${theme.spacing.md};
-    display: inline-block;
-  }
-
-  .event-title {
-    color: ${theme.colors.text.primary};
-    font-size: 1.5rem;
-    margin-bottom: ${theme.spacing.sm};
-  }
-
-  .event-description {
-    color: ${theme.colors.text.secondary};
-    margin-bottom: ${theme.spacing.lg};
-    line-height: 1.6;
-  }
-
-  .event-details {
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.spacing.sm};
-    margin-bottom: ${theme.spacing.lg};
-  }
-
-  .event-detail {
-    display: flex;
-    align-items: center;
-    gap: ${theme.spacing.sm};
-    color: ${theme.colors.text.secondary};
-    font-size: 0.875rem;
-
-    svg {
-      color: ${theme.colors.primary};
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  .event-price {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: ${theme.colors.primary};
-    margin-bottom: ${theme.spacing.md};
+    box-shadow: ${theme.shadows.lg};
   }
 `;
 
+const EventImage = styled.div<{ $src?: string }>`
+  height: 250px;
+  background: ${props => props.$src 
+    ? `url(${props.$src}) center/cover` 
+    : `linear-gradient(45deg, ${theme.colors.primary}, ${theme.colors.primaryLight})`
+  };
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 3rem;
+`;
+
+const FeaturedBadge = styled.div`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: ${theme.colors.primary};
+  color: white;
+  padding: 5px 12px;
+  border-radius: ${theme.borderRadius.sm};
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
+
+const EventContent = styled.div`
+  padding: ${theme.spacing.lg};
+`;
+
+const EventTitle = styled.h3`
+  margin-bottom: ${theme.spacing.sm};
+  color: ${theme.colors.text.primary};
+  font-size: 1.4rem;
+`;
+
+const EventDescription = styled.p`
+  color: ${theme.colors.text.secondary};
+  margin-bottom: ${theme.spacing.md};
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`;
+
+const EventMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.sm};
+  margin-bottom: ${theme.spacing.lg};
+`;
+
+const MetaItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.sm};
+  color: ${theme.colors.text.secondary};
+  font-size: 0.95rem;
+
+  svg {
+    color: ${theme.colors.primary};
+  }
+`;
+
+const EventActions = styled.div`
+  display: flex;
+  gap: ${theme.spacing.sm};
+  margin-top: ${theme.spacing.md};
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: ${theme.colors.text.secondary};
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: ${theme.spacing.xxl} 0;
+  color: ${theme.colors.text.secondary};
+
+  h3 {
+    margin-bottom: ${theme.spacing.md};
+    font-size: 1.5rem;
+  }
+`;
+
+// ============ COMPONENT ============
 const Events: React.FC = () => {
-  const [activeFilter, setActiveFilter] = useState('todos');
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('all');
 
-  const eventCategories = [
-    { key: 'todos', label: 'Todos os Eventos' },
-    { key: 'workshops', label: 'Workshops' },
-    { key: 'rodas', label: 'Rodas de Capoeira' },
-    { key: 'batizados', label: 'Batizados' },
-    { key: 'apresentacoes', label: 'Apresentações' },
+  const filters = [
+    { key: 'all', label: 'Todos os Eventos' },
+    { key: 'featured', label: 'Destaque' },
+    { key: 'beginner', label: 'Iniciante' },
+    { key: 'intermediate', label: 'Intermediário' },
+    { key: 'advanced', label: 'Avançado' }
   ];
 
-  const mockEvents = [
-    {
-      id: 1,
-      title: 'Roda de Capoeira - Domingo',
-      description: 'Roda tradicional de capoeira aberta ao público. Venha jogar, cantar e tocar com nossa comunidade.',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'rodas',
-      date: '2024-10-06',
-      time: '15:00',
-      location: 'Academia Capoeira Nacional',
-      participants: 25,
-      price: 'Gratuito',
-      featured: true,
-    },
-    {
-      id: 2,
-      title: 'Workshop de Instrumentos',
-      description: 'Aprenda a tocar berimbau, atabaque e pandeiro. Workshop para todos os níveis.',
-      image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'workshops',
-      date: '2024-10-12',
-      time: '14:00',
-      location: 'Sala de Instrumentos',
-      participants: 15,
-      price: 'R$ 50,00',
-      featured: false,
-    },
-    {
-      id: 3,
-      title: 'Batizado e Troca de Cordas 2024',
-      description: 'Evento especial para graduação de alunos. Cerimônia tradicional com mestres convidados.',
-      image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'batizados',
-      date: '2024-11-15',
-      time: '09:00',
-      location: 'Centro Cultural',
-      participants: 100,
-      price: 'R$ 80,00',
-      featured: true,
-    },
-    {
-      id: 4,
-      title: 'Apresentação Cultural - Shopping',
-      description: 'Apresentação de capoeira no shopping center. Demonstração da arte para o público geral.',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'apresentacoes',
-      date: '2024-10-20',
-      time: '16:00',
-      location: 'Shopping Center',
-      participants: 12,
-      price: 'Gratuito',
-      featured: false,
-    },
-  ];
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      let url = '/api/events?status=published';
+      
+      if (activeFilter === 'featured') {
+        url += '&featured=true';
+      } else if (activeFilter !== 'all') {
+        url += `&level=${activeFilter}`;
+      }
 
-  const filteredEvents = activeFilter === 'todos' 
-    ? mockEvents 
-    : mockEvents.filter(event => event.category === activeFilter);
+      const response = await api.get(url);
+      setEvents(response.data.events || []);
+    } catch (error) {
+      console.error('Erro ao carregar eventos:', error);
+      toast.error('Erro ao carregar eventos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, [activeFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatPrice = (price: number) => {
+    return price === 0 ? 'Gratuito' : `R$ ${price.toFixed(2)}`;
+  };
+
+  const getImageUrl = (image?: string) => {
+    if (!image) return undefined;
+    return image.startsWith('http') ? image : `http://localhost:5000${image}`;
+  };
 
   return (
     <EventsContainer>
       <HeroSection>
         <Container>
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
           >
             <h1>Eventos da Academia</h1>
             <p>
-              Participe de nossas rodas, workshops e eventos especiais. 
-              Conecte-se com a comunidade da capoeira e aprofunde seus conhecimentos.
+              Participe de nossas rodas, workshops e eventos especiais. Conecte-se 
+              com a comunidade da capoeira e aprofunde seus conhecimentos.
             </p>
           </motion.div>
         </Container>
@@ -224,67 +276,101 @@ const Events: React.FC = () => {
 
       <Container>
         <FilterSection>
-          {eventCategories.map(category => (
+          {filters.map((filter) => (
             <FilterButton
-              key={category.key}
-              $active={activeFilter === category.key}
-              onClick={() => setActiveFilter(category.key)}
+              key={filter.key}
+              $active={activeFilter === filter.key}
+              onClick={() => setActiveFilter(filter.key)}
             >
-              {category.label}
+              {filter.label}
             </FilterButton>
           ))}
         </FilterSection>
 
-        <EventsGrid>
-          {filteredEvents.map((event, index) => (
-            <EventCard
-              key={event.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
-              {event.featured && (
-                <div className="event-badge">
-                  <Star size={14} style={{ marginRight: '4px', display: 'inline' }} />
-                  Destaque
-                </div>
-              )}
-              
-              <img src={event.image} alt={event.title} className="event-image" />
-              
-              <div className="event-content">
-                <h3 className="event-title">{event.title}</h3>
-                <p className="event-description">{event.description}</p>
-                
-                <div className="event-details">
-                  <div className="event-detail">
-                    <Calendar />
-                    <span>{new Date(event.date).toLocaleDateString('pt-BR')}</span>
-                  </div>
-                  <div className="event-detail">
-                    <Clock />
-                    <span>{event.time}</span>
-                  </div>
-                  <div className="event-detail">
-                    <MapPin />
-                    <span>{event.location}</span>
-                  </div>
-                  <div className="event-detail">
-                    <Users />
-                    <span>{event.participants} participantes esperados</span>
-                  </div>
-                </div>
+        {loading ? (
+          <LoadingContainer>
+            Carregando eventos...
+          </LoadingContainer>
+        ) : events.length === 0 ? (
+          <EmptyState>
+            <h3>Nenhum evento encontrado</h3>
+            <p>Não há eventos disponíveis no momento.</p>
+          </EmptyState>
+        ) : (
+          <EventsGrid>
+            {events.map((event, index) => (
+              <EventCard
+                key={event.id}
+                $featured={event.is_featured}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <EventImage $src={getImageUrl(event.image)}>
+                  {!event.image && '🥋'}
+                  {event.is_featured && (
+                    <FeaturedBadge>
+                      <Star size={16} />
+                      Destaque
+                    </FeaturedBadge>
+                  )}
+                </EventImage>
 
-                <div className="event-price">{event.price}</div>
+                <EventContent>
+                  <EventTitle>{event.title}</EventTitle>
+                  <EventDescription>{event.description}</EventDescription>
 
-                <Button size="md" style={{ width: '100%' }}>
-                  Inscrever-se
-                </Button>
-              </div>
-            </EventCard>
-          ))}
-        </EventsGrid>
+                  <EventMeta>
+                    <MetaItem>
+                      <Calendar size={18} />
+                      {formatDate(event.event_date)}
+                    </MetaItem>
+                    
+                    <MetaItem>
+                      <Clock size={18} />
+                      {formatTime(event.event_date)}
+                    </MetaItem>
+                    
+                    <MetaItem>
+                      <MapPin size={18} />
+                      {event.location}
+                    </MetaItem>
+                    
+                    <MetaItem>
+                      <DollarSign size={18} />
+                      {formatPrice(event.price)}
+                    </MetaItem>
+                    
+                    {event.max_participants && (
+                      <MetaItem>
+                        <Users size={18} />
+                        {event.registrations_count || 0} / {event.max_participants} participantes
+                      </MetaItem>
+                    )}
+                    
+                    {event.level && (
+                      <MetaItem>
+                        <Star size={18} />
+                        Nível: {event.level === 'beginner' ? 'Iniciante' : 
+                                event.level === 'intermediate' ? 'Intermediário' : 
+                                event.level === 'advanced' ? 'Avançado' : 'Todos os níveis'}
+                      </MetaItem>
+                    )}
+                  </EventMeta>
+
+                  <EventActions>
+                    <Button variant="primary" style={{ flex: 1 }}>
+                      Inscrever-se
+                    </Button>
+                    <Button variant="secondary">
+                      Detalhes
+                    </Button>
+                  </EventActions>
+                </EventContent>
+              </EventCard>
+            ))}
+          </EventsGrid>
+        )}
       </Container>
     </EventsContainer>
   );

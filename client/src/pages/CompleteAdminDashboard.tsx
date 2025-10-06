@@ -3,14 +3,85 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Calendar, ShoppingCart, Image, 
-  BarChart3, Home, LogOut, Menu, X
+  BarChart3, Home, LogOut, Menu, X, 
+  Globe, Settings
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import ProfessionalAdminDashboard from './ProfessionalAdminDashboard';
-import UsersManagement from '../components/admin/UsersManagement';
-import EventsManagement from '../components/admin/EventsManagement';
-import ProductsManagement from '../components/admin/ProductsManagement';
-import GalleryManagement from '../components/admin/GalleryManagement';
+import NewRealTimeDashboard from '../components/admin/NewRealTimeDashboard';
+import SuperAdvancedUsersManagement from '../components/admin/SuperAdvancedUsersManagement';
+import EventsManager from '../components/admin/EventsManager';
+import ProductsManager from '../components/admin/ProductsManager';
+const GalleryManagement = () => (
+  <div style={{color: 'white', padding: '30px'}}>
+    <h2 style={{margin: '0 0 20px 0', fontSize: '2rem'}}>🖼️ Gestão de Galeria</h2>
+    <p style={{opacity: 0.8}}>Sistema de gestão de galeria em desenvolvimento...</p>
+  </div>
+);
+
+// Componentes de navegação do site
+const SiteNavigation = () => (
+  <div style={{color: 'white', padding: '30px'}}>
+    <h2 style={{margin: '0 0 20px 0', fontSize: '2rem'}}>🌐 Navegação do Site</h2>
+    <div style={{display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))'}}>
+      <a href="/" target="_blank" style={{
+        display: 'block', padding: '20px', background: 'rgba(255,255,255,0.1)', 
+        borderRadius: '10px', textDecoration: 'none', color: 'white',
+        border: '1px solid rgba(255,255,255,0.2)', transition: 'all 0.3s ease'
+      }}>
+        🏠 Página Inicial
+      </a>
+      <a href="/sobre" target="_blank" style={{
+        display: 'block', padding: '20px', background: 'rgba(255,255,255,0.1)', 
+        borderRadius: '10px', textDecoration: 'none', color: 'white',
+        border: '1px solid rgba(255,255,255,0.2)', transition: 'all 0.3s ease'
+      }}>
+        ℹ️ Sobre Nós
+      </a>
+      <a href="/eventos" target="_blank" style={{
+        display: 'block', padding: '20px', background: 'rgba(255,255,255,0.1)', 
+        borderRadius: '10px', textDecoration: 'none', color: 'white',
+        border: '1px solid rgba(255,255,255,0.2)', transition: 'all 0.3s ease'
+      }}>
+        � Eventos
+      </a>
+      <a href="/galeria" target="_blank" style={{
+        display: 'block', padding: '20px', background: 'rgba(255,255,255,0.1)', 
+        borderRadius: '10px', textDecoration: 'none', color: 'white',
+        border: '1px solid rgba(255,255,255,0.2)', transition: 'all 0.3s ease'
+      }}>
+        🖼️ Galeria
+      </a>
+      <a href="/loja" target="_blank" style={{
+        display: 'block', padding: '20px', background: 'rgba(255,255,255,0.1)', 
+        borderRadius: '10px', textDecoration: 'none', color: 'white',
+        border: '1px solid rgba(255,255,255,0.2)', transition: 'all 0.3s ease'
+      }}>
+        🛍️ Loja
+      </a>
+      <a href="/contato" target="_blank" style={{
+        display: 'block', padding: '20px', background: 'rgba(255,255,255,0.1)', 
+        borderRadius: '10px', textDecoration: 'none', color: 'white',
+        border: '1px solid rgba(255,255,255,0.2)', transition: 'all 0.3s ease'
+      }}>
+        📞 Contato
+      </a>
+    </div>
+  </div>
+);
+
+const SiteSettings = () => (
+  <div style={{color: 'white', padding: '30px'}}>
+    <h2 style={{margin: '0 0 20px 0', fontSize: '2rem'}}>⚙️ Configurações do Site</h2>
+    <p style={{opacity: 0.8}}>Configurações gerais do sistema em desenvolvimento...</p>
+  </div>
+);
+
+const Analytics = () => (
+  <div style={{color: 'white', padding: '30px'}}>
+    <h2 style={{margin: '0 0 20px 0', fontSize: '2rem'}}>📊 Analytics</h2>
+    <p style={{opacity: 0.8}}>Relatórios e análises em desenvolvimento...</p>
+  </div>
+);
 
 // ============ STYLED COMPONENTS ============
 const AdminContainer = styled.div`
@@ -174,25 +245,25 @@ const adminPages: AdminPage[] = [
     id: 'dashboard',
     name: 'Dashboard',
     icon: <Home size={20} className="icon" />,
-    component: <ProfessionalAdminDashboard />
+    component: <NewRealTimeDashboard />
   },
   {
     id: 'users',
     name: 'Usuários',
     icon: <Users size={20} className="icon" />,
-    component: <UsersManagement />
+    component: <SuperAdvancedUsersManagement />
   },
   {
     id: 'events',
     name: 'Eventos',
     icon: <Calendar size={20} className="icon" />,
-    component: <EventsManagement />
+    component: <EventsManager />
   },
   {
     id: 'products',
     name: 'Produtos',
     icon: <ShoppingCart size={20} className="icon" />,
-    component: <ProductsManagement />
+    component: <ProductsManager />
   },
   {
     id: 'gallery',
@@ -201,10 +272,22 @@ const adminPages: AdminPage[] = [
     component: <GalleryManagement />
   },
   {
+    id: 'site',
+    name: 'Navegação',
+    icon: <Globe size={20} className="icon" />,
+    component: <SiteNavigation />
+  },
+  {
     id: 'analytics',
     name: 'Analytics',
     icon: <BarChart3 size={20} className="icon" />,
-    component: <div style={{ padding: '40px', color: 'white', textAlign: 'center' }}>📊 Analytics em desenvolvimento</div>
+    component: <Analytics />
+  },
+  {
+    id: 'settings',
+    name: 'Configurações',
+    icon: <Settings size={20} className="icon" />,
+    component: <SiteSettings />
   }
 ];
 

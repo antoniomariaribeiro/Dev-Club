@@ -3,7 +3,9 @@ const router = express.Router();
 const { Op } = require('sequelize');
 const { Event, EventRegistration, User } = require('../models');
 const { authMiddleware, adminMiddleware } = require('../middleware/auth');
+const { upload, handleMulterError } = require('../middleware/upload');
 const { body, validationResult } = require('express-validator');
+const path = require('path');
 
 // Middleware para garantir que todas as rotas são protegidas e apenas para admins
 router.use(authMiddleware);
@@ -13,7 +15,7 @@ router.use(adminMiddleware);
 const eventValidation = [
   body('title').trim().notEmpty().withMessage('Título é obrigatório'),
   body('description').trim().notEmpty().withMessage('Descrição é obrigatória'),
-  body('date').isISO8601().withMessage('Data inválida'),
+  body('event_date').isISO8601().withMessage('Data inválida'),
   body('time').matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).withMessage('Horário inválido (formato: HH:MM)'),
   body('location').trim().notEmpty().withMessage('Local é obrigatório'),
   body('max_participants').isInt({ min: 1 }).withMessage('Número máximo de participantes deve ser maior que 0'),
@@ -43,13 +45,13 @@ router.get('/', async (req, res) => {
     }
     
     if (date_from && date_to) {
-      whereClause.date = {
+      whereClause.event_date = {
         [Op.between]: [date_from, date_to]
       };
     } else if (date_from) {
-      whereClause.date = { [Op.gte]: date_from };
+      whereClause.event_date = { [Op.gte]: date_from };
     } else if (date_to) {
-      whereClause.date = { [Op.lte]: date_to };
+      whereClause.event_date = { [Op.lte]: date_to };
     }
     
     const offset = (page - 1) * limit;
@@ -58,7 +60,7 @@ router.get('/', async (req, res) => {
       where: whereClause,
       limit: parseInt(limit),
       offset,
-      order: [['date', 'ASC']],
+      order: [['event_date', 'ASC']],
       include: [
         {
           model: EventRegistration,
@@ -103,7 +105,7 @@ router.get('/', async (req, res) => {
 // @route   POST /api/admin/events
 // @desc    Criar novo evento
 // @access  Admin
-router.post('/', eventValidation, async (req, res) => {
+router.post('/', upload.single('image'), handleMulterError, eventValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -116,28 +118,37 @@ router.post('/', eventValidation, async (req, res) => {
     const {
       title,
       description,
-      date,
-      time,
+      event_date,
+      end_date,
       location,
       max_participants,
       price,
-      image_url,
       requirements,
-      category
+      what_to_bring,
+      instructor,
+      level
     } = req.body;
+
+    // Processar imagem se foi enviada
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = `/uploads/events/${req.file.filename}`;
+    }
 
     const event = await Event.create({
       title,
       description,
-      date,
-      time,
+      event_date,
+      end_date,
       location,
-      max_participants,
-      price,
-      image_url,
+      max_participants: parseInt(max_participants),
+      price: parseFloat(price),
+      image: imageUrl,
       requirements,
-      category,
-      status: 'active'
+      what_to_bring,
+      instructor,
+      level,
+      status: 'published'
     });
 
     res.status(201).json({
@@ -153,7 +164,7 @@ router.post('/', eventValidation, async (req, res) => {
 // @route   PUT /api/admin/events/:id
 // @desc    Atualizar evento
 // @access  Admin
-router.put('/:id', eventValidation, async (req, res) => {
+router.put('/:id', upload.single('image'), handleMulterError, eventValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -167,14 +178,15 @@ router.put('/:id', eventValidation, async (req, res) => {
     const {
       title,
       description,
-      date,
-      time,
+      event_date,
+      end_date,
       location,
       max_participants,
       price,
-      image_url,
       requirements,
-      category,
+      what_to_bring,
+      instructor,
+      level,
       status
     } = req.body;
 
@@ -183,17 +195,25 @@ router.put('/:id', eventValidation, async (req, res) => {
       return res.status(404).json({ message: 'Evento não encontrado' });
     }
 
+    // Processar imagem se foi enviada
+    let imageUrl = event.image; // manter imagem atual se nenhuma nova for enviada
+    if (req.file) {
+      imageUrl = `/uploads/events/${req.file.filename}`;
+    }
+
     await event.update({
       title,
       description,
-      date,
-      time,
+      event_date,
+      end_date,
       location,
-      max_participants,
-      price,
-      image_url,
+      max_participants: parseInt(max_participants),
+      price: parseFloat(price),
+      image: imageUrl,
       requirements,
-      category,
+      what_to_bring,
+      instructor,
+      level,
       status
     });
 

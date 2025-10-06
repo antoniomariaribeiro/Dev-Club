@@ -41,7 +41,7 @@ export const useEventPayment = () => {
     try {
       setError(null);
       
-      const response = await api.post('/payments/create-payment-intent', paymentData);
+      const response = await api.post('/api/payments/create-payment-intent', paymentData);
       
       if (!response.data.success) {
         throw new Error(response.data.error || 'Erro ao criar intenção de pagamento');
@@ -63,7 +63,7 @@ export const useEventPayment = () => {
       setLoading(true);
       setError(null);
       
-      const response = await api.post('/payments/confirm-payment', {
+      const response = await api.post('/api/payments/confirm-payment', {
         payment_intent_id: paymentIntentId,
         payment_method_id: paymentMethodId
       });
@@ -115,7 +115,7 @@ export const useEventPayment = () => {
       if (paymentConfirmed) {
         // 3. Registrar inscrição no evento (isso deve ser feito automaticamente pelo webhook)
         try {
-          const registrationResponse = await api.post('/events/register', {
+          const registrationResponse = await api.post('/api/events/register', {
             event_id: event.id
           });
           

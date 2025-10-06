@@ -148,6 +148,11 @@ const AdminLogin: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('🚀 AdminLogin: Iniciando processo de login...', {
+      email: formData.email,
+      hasPassword: !!formData.password
+    });
+    
     if (!formData.email || !formData.password) {
       toast.error('Preencha todos os campos');
       return;
@@ -156,12 +161,20 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
     
     try {
+      console.log('🔐 AdminLogin: Chamando função login do contexto...');
       await login(formData.email, formData.password);
+      console.log('✅ AdminLogin: Login realizado com sucesso!');
       toast.success('Login realizado com sucesso!');
+      console.log('🔄 AdminLogin: Redirecionando para /admin/dashboard...');
       navigate('/admin/dashboard');
     } catch (error: any) {
-      console.error('Erro no login:', error);
-      toast.error(error.response?.data?.message || 'Erro ao fazer login');
+      console.error('❌ AdminLogin: Erro no login:', error);
+      console.log('Status do erro:', error.response?.status);
+      console.log('Dados do erro:', error.response?.data);
+      console.log('Mensagem do erro:', error.message);
+      
+      const errorMessage = error.response?.data?.message || error.message || 'Erro ao fazer login';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -224,6 +237,50 @@ const AdminLogin: React.FC = () => {
             <ArrowRight size={20} />
           </LoginButton>
         </Form>
+        
+        {/* Botão de teste para debug */}
+        <button 
+          type="button"
+          onClick={async () => {
+            console.log('🧪 Teste direto da API...');
+            try {
+              const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: 'admin@admin.com',
+                  password: 'admin123'
+                })
+              });
+              
+              const data = await response.json();
+              console.log('🧪 Resposta do teste:', data);
+              
+              if (data.success) {
+                toast.success('Teste direto funcionou! Token: ' + data.token.substring(0, 20) + '...');
+              } else {
+                toast.error('Teste direto falhou: ' + data.message);
+              }
+            } catch (error) {
+              console.error('🧪 Erro no teste:', error);
+              toast.error('Erro no teste direto');
+            }
+          }}
+          style={{
+            marginTop: '10px',
+            padding: '10px',
+            backgroundColor: '#ff6b6b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            width: '100%'
+          }}
+        >
+          🧪 Teste Direto API
+        </button>
       </LoginCard>
     </PageContainer>
   );

@@ -186,7 +186,7 @@ const CheckoutForm: React.FC<CheckoutProps> = ({
     // Criar Payment Intent quando o componente carrega
     const createPaymentIntent = async () => {
       try {
-        const response = await api.post('/payments/create-payment-intent', {
+        const response = await api.post('/api/payments/create-payment-intent', {
           amount: eventPrice * 100, // Converter para centavos
           currency: 'brl',
           event_id: eventId,
@@ -241,7 +241,7 @@ const CheckoutForm: React.FC<CheckoutProps> = ({
 
       if (paymentIntent && paymentIntent.status === 'succeeded') {
         // Confirmar pagamento no backend
-        await api.post('/payments/confirm-payment', {
+        await api.post('/api/payments/confirm-payment', {
           payment_intent_id: paymentIntent.id,
           event_id: eventId,
           user_id: userId,

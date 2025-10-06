@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 const { Product } = require('../models');
 const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 const { body, validationResult } = require('express-validator');
+const { upload, handleMulterError } = require('../middleware/upload');
 
 // Middleware para garantir que todas as rotas são protegidas e apenas para admins
 router.use(authMiddleware);
@@ -80,42 +81,59 @@ router.get('/', async (req, res) => {
 // @route   POST /api/admin/products
 // @desc    Criar novo produto
 // @access  Admin
-router.post('/', productValidation, async (req, res) => {
+router.post('/', upload.array('images', 10), handleMulterError, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        message: 'Dados inválidos',
-        errors: errors.array()
-      });
-    }
-
     const {
       name,
       description,
+      short_description,
       price,
+      old_price,
       category,
-      stock_quantity,
+      brand,
       sku,
-      images,
-      specifications,
+      stock_quantity,
       weight,
-      dimensions,
-      is_active = true
+      status = 'active',
+      is_featured = 'false',
+      tags
     } = req.body;
+
+    // Validação básica
+    if (!name || !description || !price || !category || !stock_quantity) {
+      return res.status(400).json({
+        message: 'Campos obrigatórios: name, description, price, category, stock_quantity'
+      });
+    }
+
+    // Processar imagens do upload
+    const images = req.files ? req.files.map(file => file.filename) : [];
+
+    // Processar tags
+    let tagsArray = [];
+    if (tags) {
+      try {
+        tagsArray = typeof tags === 'string' ? JSON.parse(tags) : tags;
+      } catch (e) {
+        tagsArray = typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : [];
+      }
+    }
 
     const product = await Product.create({
       name,
       description,
-      price,
+      short_description: short_description || null,
+      price: parseFloat(price),
+      old_price: old_price ? parseFloat(old_price) : null,
       category,
-      stock_quantity,
-      sku,
-      images: JSON.stringify(images || []),
-      specifications,
-      weight,
-      dimensions,
-      is_active
+      brand: brand || null,
+      sku: sku || null,
+      stock_quantity: parseInt(stock_quantity),
+      weight: weight ? parseFloat(weight) : null,
+      images: images,
+      status,
+      is_featured: is_featured === 'true',
+      tags: tagsArray
     });
 
     res.status(201).json({
@@ -131,29 +149,23 @@ router.post('/', productValidation, async (req, res) => {
 // @route   PUT /api/admin/products/:id
 // @desc    Atualizar produto
 // @access  Admin
-router.put('/:id', productValidation, async (req, res) => {
+router.put('/:id', upload.array('images', 10), handleMulterError, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        message: 'Dados inválidos',
-        errors: errors.array()
-      });
-    }
-
     const { id } = req.params;
     const {
       name,
       description,
+      short_description,
       price,
+      old_price,
       category,
-      stock_quantity,
+      brand,
       sku,
-      images,
-      specifications,
+      stock_quantity,
       weight,
-      dimensions,
-      is_active
+      status,
+      is_featured = 'false',
+      tags
     } = req.body;
 
     const product = await Product.findByPk(id);
@@ -161,18 +173,38 @@ router.put('/:id', productValidation, async (req, res) => {
       return res.status(404).json({ message: 'Produto não encontrado' });
     }
 
+    // Processar imagens do upload
+    let images = product.images || [];
+    if (req.files && req.files.length > 0) {
+      // Se foram enviadas novas imagens, substitui as antigas
+      images = req.files.map(file => file.filename);
+    }
+
+    // Processar tags
+    let tagsArray = product.tags || [];
+    if (tags) {
+      try {
+        tagsArray = typeof tags === 'string' ? JSON.parse(tags) : tags;
+      } catch (e) {
+        tagsArray = typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : [];
+      }
+    }
+
     await product.update({
-      name,
-      description,
-      price,
-      category,
-      stock_quantity,
-      sku,
-      images: JSON.stringify(images || []),
-      specifications,
-      weight,
-      dimensions,
-      is_active
+      name: name || product.name,
+      description: description || product.description,
+      short_description: short_description !== undefined ? short_description : product.short_description,
+      price: price ? parseFloat(price) : product.price,
+      old_price: old_price !== undefined ? (old_price ? parseFloat(old_price) : null) : product.old_price,
+      category: category || product.category,
+      brand: brand !== undefined ? brand : product.brand,
+      sku: sku !== undefined ? sku : product.sku,
+      stock_quantity: stock_quantity ? parseInt(stock_quantity) : product.stock_quantity,
+      weight: weight !== undefined ? (weight ? parseFloat(weight) : null) : product.weight,
+      images: images,
+      status: status || product.status,
+      is_featured: is_featured === 'true',
+      tags: tagsArray
     });
 
     res.json({

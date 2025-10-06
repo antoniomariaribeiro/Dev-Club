@@ -11,12 +11,7 @@ import NewRealTimeDashboard from '../components/admin/NewRealTimeDashboard';
 import SuperAdvancedUsersManagement from '../components/admin/SuperAdvancedUsersManagement';
 import EventsManager from '../components/admin/EventsManager';
 import ProductsManager from '../components/admin/ProductsManager';
-const GalleryManagement = () => (
-  <div style={{color: 'white', padding: '30px'}}>
-    <h2 style={{margin: '0 0 20px 0', fontSize: '2rem'}}>🖼️ Gestão de Galeria</h2>
-    <p style={{opacity: 0.8}}>Sistema de gestão de galeria em desenvolvimento...</p>
-  </div>
-);
+import GalleryManager from '../components/admin/GalleryManager';
 
 // Componentes de navegação do site
 const SiteNavigation = () => (
@@ -269,7 +264,7 @@ const adminPages: AdminPage[] = [
     id: 'gallery',
     name: 'Galeria',
     icon: <Image size={20} className="icon" />,
-    component: <GalleryManagement />
+    component: <GalleryManager />
   },
   {
     id: 'site',

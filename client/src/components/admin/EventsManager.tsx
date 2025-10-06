@@ -27,6 +27,9 @@ interface Event {
   what_to_bring?: string;
   instructor?: string;
   registrations_count: number;
+  confirmed_count: number;
+  pending_count: number;
+  available_spots: number;
   created_at: string;
 }
 
@@ -454,6 +457,7 @@ const EventsManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [levelFilter, setLevelFilter] = useState('all');
+  const [lastUpdate, setLastUpdate] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -475,16 +479,20 @@ const EventsManager: React.FC = () => {
   });
 
   // ============ FUNCTIONS ============
-  const fetchEvents = async () => {
+  const fetchEvents = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       const response = await api.get('/api/admin/events');
       setEvents(response.data.events || []);
+      
+      // Atualizar dados em tempo real
+      setLastUpdate(new Date());
+      console.log('✅ Eventos atualizados:', response.data.events?.length || 0);
     } catch (error) {
-      console.error('Erro ao carregar eventos:', error);
+      console.error('❌ Erro ao carregar eventos:', error);
       toast.error('Erro ao carregar eventos');
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -535,15 +543,39 @@ const EventsManager: React.FC = () => {
   };
 
   const handleDeleteEvent = async (id: number) => {
-    if (window.confirm('Tem certeza que deseja excluir este evento?')) {
-      try {
+    try {
+      // Buscar detalhes do evento primeiro
+      const eventResponse = await api.get(`/api/admin/events/${id}`);
+      const event = eventResponse.data.event;
+      
+      if (event.confirmed_count > 0) {
+        const cancelFirst = window.confirm(
+          `Este evento possui ${event.confirmed_count} inscrições confirmadas. ` +
+          'É necessário cancelar o evento primeiro para excluí-lo. Deseja cancelar automaticamente?'
+        );
+        
+        if (cancelFirst) {
+          // Cancelar o evento primeiro
+          await api.put(`/api/admin/events/${id}`, {
+            ...event,
+            status: 'cancelled'
+          });
+          toast.success('Evento cancelado com sucesso!');
+          fetchEvents();
+          return;
+        } else {
+          return;
+        }
+      }
+      
+      if (window.confirm('Tem certeza que deseja excluir este evento permanentemente?')) {
         await api.delete(`/api/admin/events/${id}`);
         toast.success('Evento excluído com sucesso!');
         fetchEvents();
-      } catch (error: any) {
-        console.error('Erro ao excluir evento:', error);
-        toast.error(error.response?.data?.message || 'Erro ao excluir evento');
       }
+    } catch (error: any) {
+      console.error('Erro ao processar evento:', error);
+      toast.error(error.response?.data?.message || 'Erro ao processar evento');
     }
   };
 
@@ -639,17 +671,34 @@ const EventsManager: React.FC = () => {
   // ============ EFFECTS ============
   useEffect(() => {
     fetchEvents();
+    
+    // Atualização automática a cada 30 segundos
+    const interval = setInterval(() => {
+      fetchEvents(false); // Sem loading visual
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   // ============ RENDER ============
   return (
     <Container>
       <Header>
-        <Title>📅 Gestão de Eventos</Title>
-        <Button variant="primary" onClick={() => openModal()}>
-          <Plus size={20} />
-          Novo Evento
-        </Button>
+        <div>
+          <Title>📅 Gestão de Eventos</Title>
+          <small style={{ color: '#bbb', fontSize: '0.8rem' }}>
+            Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
+          </small>
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Button variant="secondary" onClick={() => fetchEvents()}>
+            🔄 Atualizar
+          </Button>
+          <Button variant="primary" onClick={() => openModal()}>
+            <Plus size={20} />
+            Novo Evento
+          </Button>
+        </div>
       </Header>
 
       <Controls>
@@ -736,7 +785,17 @@ const EventsManager: React.FC = () => {
                   </MetaItem>
                   <MetaItem>
                     <Users size={16} />
-                    {event.registrations_count || 0} / {event.max_participants} inscritos
+                    <span style={{ color: event.confirmed_count > 0 ? '#27ae60' : '#95a5a6' }}>
+                      {event.confirmed_count || 0} confirmados
+                    </span>
+                    {' | '}
+                    <span style={{ color: '#f39c12' }}>
+                      {event.pending_count || 0} pendentes
+                    </span>
+                    {' | '}
+                    <span style={{ color: '#3498db' }}>
+                      {event.available_spots || event.max_participants} vagas
+                    </span>
                   </MetaItem>
                 </EventMeta>
 

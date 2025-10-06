@@ -210,38 +210,29 @@ router.get('/categories', async (req, res) => {
 // @access  Admin
 router.get('/stats', async (req, res) => {
   try {
-    const totalImages = await Gallery.count();
+    // Total de imagens
+    const total = await Gallery.count();
     
-    // Imagens por categoria
-    const imagesByCategory = await Gallery.findAll({
-      attributes: [
-        'category',
-        [Gallery.sequelize.fn('COUNT', '*'), 'count']
-      ],
-      group: ['category'],
-      raw: true
+    // Imagens ativas
+    const active = await Gallery.count({
+      where: { status: 'active' }
     });
     
-    // Imagens por mês (últimos 6 meses)
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    // Imagens inativas
+    const inactive = await Gallery.count({
+      where: { status: 'inactive' }
+    });
     
-    const imagesByMonth = await Gallery.findAll({
-      where: {
-        created_at: { [Op.gte]: sixMonthsAgo }
-      },
-      attributes: [
-        [Gallery.sequelize.fn('DATE_FORMAT', Gallery.sequelize.col('created_at'), '%Y-%m'), 'month'],
-        [Gallery.sequelize.fn('COUNT', '*'), 'count']
-      ],
-      group: [Gallery.sequelize.fn('DATE_FORMAT', Gallery.sequelize.col('created_at'), '%Y-%m')],
-      order: [[Gallery.sequelize.fn('DATE_FORMAT', Gallery.sequelize.col('created_at'), '%Y-%m'), 'ASC']]
+    // Imagens destacadas
+    const featured = await Gallery.count({
+      where: { is_featured: true }
     });
     
     res.json({
-      total_images: totalImages,
-      categories: imagesByCategory,
-      monthly_uploads: imagesByMonth
+      total,
+      active,
+      inactive,
+      featured
     });
   } catch (error) {
     console.error('Erro ao obter estatísticas:', error);
